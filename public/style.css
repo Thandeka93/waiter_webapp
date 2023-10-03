@@ -1,19 +1,13 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Peralta&display=swap'); */
-
-/* *{box-sizing: border-box;
-} */
-
-/* @keyframes float {
-    0% { background-position: 0 0; }
-    100% { background-position: 100% 100%; }
-} */
-
- body {
-    background-color: aquamarine;
-    padding: 5%;
+body {
+    /* background-color: aquamarine; */
+    background-image: url('https://insanelygoodrecipes.com/wp-content/uploads/2020/07/Cup-Of-Creamy-Coffee-1024x536.webp'); 
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    padding: 2.5%;
     margin: 2%;
     font-family:'Peralta';
-    font-size: larger;
+    font-size: x-large;
+    color: #e0d9d9;
 }
 
 .container {
