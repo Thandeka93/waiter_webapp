@@ -1,0 +1,23 @@
+<div class="Heading">
+   <h1>Weekly Roster </h1> 
+</div>
+<div class="Onduty">
+    <form action="/day" method="GET">
+    <div class="date">
+        {{day}}
+    </div>
+    <div class="waiterList">
+        <h2>Waiter Staff On Duty:</h2>
+        {{#each waitersByDay}}
+            <ul>
+                <li>
+                    {{this.name}}
+                </li>
+            </ul>
+        {{/each}}
+        </form>
+    </div>
+
+</div>
+
+<a href="/waiters">Waiters</a>

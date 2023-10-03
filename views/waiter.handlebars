@@ -1,0 +1,33 @@
+<div class="view-schedule">
+<form action="/waiters/{{username}}" method="GET">
+<h1>Hi, {{username}} view and update your week's schedule here</h1>
+</form>
+  <div class="schedule">
+    <table>
+        <thead>
+            <tr>
+               <thead>
+    <tr>
+        <th>{{username}}</th>
+        <th>Update Schedule</th>
+    </tr>
+</thead>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{#each waiterSchedule}}
+            <tr>
+              <td>{{this.day}}</td>
+              <td>
+            <form action="/waiters/{{../username}}/cancel" method="POST">
+                <input type="hidden" name="day" value="{{this.day}}">
+                <button type="submit">Cancel</button>
+            </form>
+        </td>
+            </tr>
+            {{/each}}
+        </tbody>
+     </table>
+  </div>
+</div>
