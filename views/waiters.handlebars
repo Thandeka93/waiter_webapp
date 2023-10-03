@@ -1,6 +1,6 @@
 <div class="view-schedule">
 <form action="/waiters/{{username}}" method="GET">
-<h1>Hi, {{username}} view and update your week's schedule here</h1>
+<h1>Hi, {{username}} please view & update your week's schedule below</h1>
 </form>
   <div class="schedule">
     <table>
@@ -22,7 +22,7 @@
               <td>
             <form action="/waiters/{{../username}}/cancel" method="POST">
                 <input type="hidden" name="day" value="{{this.day}}">
-                <button type="submit">Cancel</button>
+                <button class="btn" type="submit">Cancel</button>
             </form>
         </td>
             </tr>
