@@ -1,80 +1,75 @@
-// Define a function 'waiter' that takes a 'db' object as a parameter:
-function waiterService(db) {
-
-    // Define an inner async function 'waiters' that takes 'waiterName' and 'dayOfTheWeek' as parameters:
-    async function waiters(waiterName, dayOfTheWeek) {
-        try {
-            // Insert a new waiter with 'waiterName' into the 'waiters' table
+function waiter(db){
+    //function to get waiter names and the days they are available and insert into the schedule table 
+    // Function to insert waiter names and the days they are available into the schedule table 
+   
+    async function waiters(waiterName, dayOfTheWeek){
+        try{
+            //enter a waiter in the waiter table
             await db.none('INSERT INTO waiters (waiter_name) VALUES ($1)', [waiterName]);
-
-            // Get the 'id' of the inserted waiter
+            //get the waiter id
             let waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-
-            // Update availability for each day and insert to the 'schedule' table
-            for (let day of dayOfTheWeek) {
-                // Get the 'id' of the 'day' from the 'day_of_the_week' table
+            //update availability for each day and insergth to waiter id and day id into scheduking table
+            for(let day of dayOfTheWeek){
                 let dayId = await db.oneOrNone('SELECT id FROM day_of_the_week WHERE day = $1', [day]);
-
-                // Insert a record into the 'schedule' table with 'waiter_id', 'day_id', and 'available' set to true
-                await db.none('INSERT INTO schedule (waiter_id,day_id, available) VALUES ($1,$2, $3)', [waiterId.id, dayId.id, true]);
+                await db.none('INSERT INTO schedule (waiter_id,day_id, available) VALUES ($1,$2, $3)',[waiterId.id, dayId.id, true]);
             }
-        } catch (error) {
-            console.error(error.message);
+        }
+        catch(error){
+            console.error(error.message)
         }
     }
+    
+    
 
-    // Define an inner async function 'getWaiterSchedule' that takes 'waiterName' as a parameter:
-    async function getWaiterSchedule(waiterName) {
-        try {
-            // Join the three tables to get all inserted values
-            let waiterSchedule = await db.many('SELECT waiters.waiter_name, day_of_the_week.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN day_of_the_week ON schedule.day_id = day_of_the_week.id WHERE waiters.waiter_name = $1', [waiterName]);
-            return waiterSchedule;
-        } catch (error) {
-            console.error(error.message);
+    //get each waiter's  schedule 
+    async function getWaiterSchedule(waiterName){
+        try{
+            //join the three tables to get all inserted values
+            let waiterSchedule = await db.many('SELECT waiters.waiter_name, day_of_the_week.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN day_of_the_week ON schedule.day_id = day_of_the_week.id WHERE waiters.waiter_name = $1', [waiterName])
+            return waiterSchedule
+        }
+        catch(error){
+            console.error(error.message)
         }
     }
+    
 
-    // Define an inner async function 'getAllSchedules':
-    async function getAllSchedules() {
-        try {
-            // Retrieve all waiter schedules from the database (query not specified in the code)
+    //get all waiters schedule 
+    async function getAllSchedules(){
+        try{
             let allWaiterSchedules = await db.manyOrNone('');
             return allWaiterSchedules;
-        } catch (error) {
-            console.error(error.message);
+        }
+        catch(error){
+            console.error(error.message)
         }
     }
 
-    // Define an inner async function 'countAvailableWaiters':
-    async function countAvailableWaiters() {
-        // This function is empty and should be implemented to count available waiters per day based on your business logic.
-    }
+    //count the number of waiters per day 
+    async function countAvailableWaiters(){
 
-    // Define an inner async function 'cancel' that takes 'waiterName' and 'day' as parameters:
-    async function cancel(waiterName, day) {
-        try {
-            // Get the 'id' of the waiter with 'waiterName'
+    }
+    async function cancel(waiterName, day){
+        try{
+            //get waiter id
             let waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-
-            // Get the 'id' of the 'day' from the 'day_of_the_week' table
+           // get day id
             let dayId = await db.oneOrNone('SELECT id FROM day_of_the_week WHERE day = $1', [day]);
-
-            // Delete the record from the 'schedule' table where 'waiter_id' matches the waiter's 'id' and 'day_id' matches the 'day' 'id'
+            //delete the available day from the schedule table
             await db.none('DELETE FROM schedule WHERE waiter_id = $1 AND day_id = $2', [waiterId.id, dayId.id]);
-        } catch (error) {
-            console.error(error.message);
+        }
+        catch(error){
+            console.error(error.message)
         }
     }
-
-    // Return an object with functions as properties:
-    return {
+    
+    return{
         waiters,
         getAllSchedules,
         getWaiterSchedule,
         countAvailableWaiters,
         cancel
-    };
+    }
 }
 
-// Export the 'waiter' function as the default export
-export default waiterService;
+export default waiter
