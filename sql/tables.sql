@@ -1,6 +1,6 @@
 CREATE TABLE waiters (
     id SERIAL PRIMARY KEY, 
-    waiter_name VARCHAR(255) NOT NULL
+    waiter_name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE day_of_the_week (
