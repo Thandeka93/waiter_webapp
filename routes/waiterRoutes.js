@@ -1,72 +1,79 @@
 // Import necessary modules and services
 import express from 'express';
-import db from '../db.js';
-import waiter from '../services/query.js';
+import db from '../db.js'; // Import the database connection
+import waiter from '../services/query.js'; // Import the waiter service
 
 const router = express.Router();
-const waiterRoute = waiter(db);
+const waiterRoute = waiter(db); // Create a waiter route using the waiter service and the database connection
 
-router.get('/',  (req,res)=>{
-    res.render('index')
-})
+// Handle requests to the root path
+router.get('/', (req, res) => {
+    res.render('index'); // Render the 'index' view
+});
 
-router.get('/days', async(req,res)=>{
-    try{
-        //list all the schedules for the week to see available waiters
-        const allSchedules = await waiterRoute.getAllSchedules()
-//list days and the number of avalable waiters 
+// Handle requests to '/days'
+router.get('/days', async (req, res) => {
+    try {
+        // List all the schedules for the week to see available waiters
+        const allSchedules = await waiterRoute.getAllSchedules(); // Call the service function to get all schedules
 
-        res.render('manager',{
+        // List days and the number of available waiters and render the 'manager' view
+        res.render('manager', {
             allSchedules
-        })
+        });
+    } catch (error) {
+        console.error('Fail to get schedules');
     }
-    catch(error){
-        console.error('Failure to get schedules')
-    }
+});
 
-})
-
-router.post('/waiters', async (req,res)=>{
-    try{
+// Handle POST requests to '/waiters'
+router.post('/waiters', async (req, res) => {
+    try {
         const waiterName = req.body.username;
         const dayOfTheWeek = req.body.days;
 
-        //get the waiter name, and days and insert to the tables
-        await waiterRoute.waiters(waiterName, dayOfTheWeek) //call the function for updating the name and days
-        console.log(waiterName, dayOfTheWeek)
+        // Get the waiter name and days and insert them into the tables
+        await waiterRoute.waiters(waiterName, dayOfTheWeek); // Call the service function to insert waiter data
 
-        res.redirect(`/waiters/${waiterName}`);
+        console.log(waiterName, dayOfTheWeek);
+
+        res.redirect(`/waiters/${waiterName}`); // Redirect to the waiter's schedule page
+    } catch (error) {
+        console.error('Fail to post schedules');
     }
-    catch(error){
-        console.error('Failure to post schedules')
-    }
-})
+});
 
-
-router.get('/waiters/:username', async (req,res)=>{
-    try{
+// Handle requests to '/waiters/:username'
+router.get('/waiters/:username', async (req, res) => {
+    try {
         const name = req.params.username;
-        //get each waiter schedule 
-        const waiterSchedule = await waiterRoute.getWaiterSchedule(name)
+
+        // Get each waiter's schedule using the service function
+        const waiterSchedule = await waiterRoute.getWaiterSchedule(name);
+
+        // Render the 'waiters' view with the waiter's schedule and username
         res.render('waiters', {
             waiterSchedule,
             username: name
-        })
-    }catch(error){
-        console.error('Failure to get schedules')
+        });
+    } catch (error) {
+        console.error('Fail to get schedules');
     }
-})
-router.post('/waiters/:username/cancel', async (req,res)=>{
-    try{
+});
+
+// Handle POST requests to '/waiters/:username/cancel'
+router.post('/waiters/:username/cancel', async (req, res) => {
+    try {
         const waiterName = req.params.username;
         const day = req.body.day;
-        //remove the available name
-        await waiterRoute.cancel(waiterName, day);
-        res.redirect(`/waiters/${waiterName}`);
-    }
-    catch(error){
-        console.error('Failure to cancel schedule')
-    }
-})
 
-export default router
+        // Remove the available name using the service function
+        await waiterRoute.cancel(waiterName, day);
+
+        res.redirect(`/waiters/${waiterName}`); // Redirect to the waiter's schedule page
+    } catch (error) {
+        console.error('Fail to cancel schedule');
+    }
+});
+
+export default router;
