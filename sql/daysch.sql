@@ -1,12 +1,10 @@
-INSERT INTO day_of_the_week (day) VALUES ('Monday');
-INSERT INTO day_of_the_week (day) VALUES ('Tuesday');
-INSERT INTO day_of_the_week (day) VALUES ('Wednesday');
-INSERT INTO day_of_the_week (day) VALUES ('Thursday');
-INSERT INTO day_of_the_week (day) VALUES ('Friday');
-INSERT INTO day_of_the_week (day) VALUES ('Saturday');
-INSERT INTO day_of_the_week (day) VALUES ('Sunday');
-
-
+INSERT INTO weekdays (day) VALUES ('Monday');
+INSERT INTO weekdays (day) VALUES ('Tuesday');
+INSERT INTO weekdays (day) VALUES ('Wednesday');
+INSERT INTO weekdays (day) VALUES ('Thursday');
+INSERT INTO weekdays (day) VALUES ('Friday');
+INSERT INTO weekdays (day) VALUES ('Saturday');
+INSERT INTO weekdays (day) VALUES ('Sunday');
 
 INSERT INTO schedule (available) VALUES (false);
 INSERT INTO schedule (available) VALUES (false);
