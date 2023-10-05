@@ -1,5 +1,11 @@
 <h1>NOLU'S COFFEE SHOP</h1>
 <h2>{{username}}'s Schedule</h2>
+<h3>Selected Days:</h3>
+<ul>
+    {{#each selectedDays}}
+    <li>{{this}}</li>
+    {{/each}}
+</ul>
 <ul>
     {{#each waiterSchedule}}
     <li>{{this.waiter_name}} - {{this.day}}</li>

@@ -27,7 +27,6 @@ router.get('/days', async (req, res) => {
     } catch (error) {
         console.error('Error fetching schedules:', error.message);
 
-        // console.error('Failure to get schedules');
     }
 });
 
@@ -37,6 +36,9 @@ router.post('/waiters/:username/update', async (req, res) => {
         const waiterName = req.params.username;
         const dayOfTheWeek = req.body.days || [];
 
+        // Store the selected days in a session variable
+        req.session.selectedDays = dayOfTheWeek;
+
         // Get the waiter name and days and insert them into the tables
         await waiterRoute.updateWaiterAvailability(waiterName, dayOfTheWeek); // Call the function for updating the name and days
         console.log(waiterName, dayOfTheWeek);
@@ -45,7 +47,6 @@ router.post('/waiters/:username/update', async (req, res) => {
     } catch (error) {
         console.error('Error fetching schedules:', error.message);
 
-        // console.error('Failure to post schedules');
     }
 });
 
@@ -55,15 +56,19 @@ router.get('/waiters/:username/update', async (req, res) => {
         const name = req.params.username;
         // Get the schedule for the specified waiter
         const waiterSchedule = await waiterRoute.getWaiterSchedule(name);
+
+        // Retrieve the selected days from the session
+        const selectedDays = req.session.selectedDays || [];
+
         // Render the 'waiters' view for updating waiter information
         res.render('waiters', {
             waiterSchedule,
-            username: name
+            username: name,
+            selectedDays, // Pass the selected days to the template
         });
     } catch (error) {
         console.error('Error fetching schedules:', error.message);
 
-        // console.error('Failure to get schedules');
     }
 });
 
@@ -81,7 +86,6 @@ router.get('/waiters/:username', async (req, res) => {
     } catch (error) {
         console.error('Error fetching schedules:', error.message);
 
-        // console.error('Failure to get schedules');
     }
 });
 
