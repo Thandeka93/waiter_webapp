@@ -21,11 +21,13 @@ router.get('/days', async (req, res) => {
         // List all the schedules for the week to see available waiters
         const allSchedules = await waiterRoute.getAllSchedules();
         // List days and the number of available waiters
-        res.render('manager', {
+        res.render('admin', {
             allSchedules
         });
     } catch (error) {
-        console.error('Failure to get schedules');
+        console.error('Error fetching schedules:', error.message);
+
+        // console.error('Failure to get schedules');
     }
 });
 
@@ -36,12 +38,14 @@ router.post('/waiters/:username/update', async (req, res) => {
         const dayOfTheWeek = req.body.days || [];
 
         // Get the waiter name and days and insert them into the tables
-        await waiterRoute.waiters(waiterName, dayOfTheWeek); // Call the function for updating the name and days
+        await waiterRoute.updateWaiterAvailability(waiterName, dayOfTheWeek); // Call the function for updating the name and days
         console.log(waiterName, dayOfTheWeek);
         // Redirect to the update page for the specific waiter
         res.redirect(`/waiters/${waiterName}/update`);
     } catch (error) {
-        console.error('Failure to post schedules');
+        console.error('Error fetching schedules:', error.message);
+
+        // console.error('Failure to post schedules');
     }
 });
 
@@ -57,7 +61,9 @@ router.get('/waiters/:username/update', async (req, res) => {
             username: name
         });
     } catch (error) {
-        console.error('Failure to get schedules');
+        console.error('Error fetching schedules:', error.message);
+
+        // console.error('Failure to get schedules');
     }
 });
 
@@ -73,7 +79,9 @@ router.get('/waiters/:username', async (req, res) => {
             username: name
         });
     } catch (error) {
-        console.error('Failure to get schedules');
+        console.error('Error fetching schedules:', error.message);
+
+        // console.error('Failure to get schedules');
     }
 });
 
