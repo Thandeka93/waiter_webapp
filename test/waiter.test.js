@@ -1,28 +1,41 @@
 import assert from "assert";
-import waiterService from "../services/query.js";
-// import pgPromise from "pg-promise";
+import pgPromise from "pg-promise";
+import createDatabaseQueries from "../services/query.js";
 
-const mockDbConnection = {
-    none: async () => { },
-    oneOrNone: async () => { },
-    many: async () => { },
-    manyOrNone: async () => { },
-};
+describe('The basic database web app', function () {
 
-// const connectionString = process.env.PGDATABASE_URL ||
-//     'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
-// const pgp = pgPromise();
-// const db = pgp(connectionString);
+    let db;
 
-describe('waiterService', () => {
-    // Initialize the waiter service with the mock database connection
-    const service = waiterService(mockDbConnection);
+    before(function () {
 
-    describe('waiters', () => {
-        it('should insert a new waiter and their availability', async () => {
-            await service.updateWaiterAvailability('John', ['Monday', 'Wednesday']);
-            assert.notEqual('John', 2);
-        });
+        const connectionString =
+            process.env.PGDATABASE_URL ||
+            'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
+
+        db = pgPromise()(connectionString);
     });
+
+    after(function () {
+        db.$pool.end();
+    });
+
+    // it('should test the insert waiter', async function () {
+    //     const queryUtility = createDatabaseQueries(db);
+    //     const waiterID = 1;
+    //     const waiterName = 'Thandeka';
+
+    //     // Insert a waiter into the database
+    //     await queryUtility.insertWaiter(waiterID, waiterName);
+
+    //     // Retrieve the inserted waiter from the database
+    //     const insertedWaiter = await queryUtility.getWaiterByName(waiterName);
+
+    //     // Assert that the retrieved waiter's name matches the expected value
+    //     assert.equal(insertedWaiter.name, waiterName);
+
+    // });
+
+
+
 });
 

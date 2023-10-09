@@ -1,144 +1,147 @@
-import db from '../db.js';
-
-// Define and export the waiterService function
-export default function waiterService() {
-  
-  // Function to insert a waiter into the 'waiters' table
-  const insertWaiter = async (waiterName) => {
+export default function createDatabaseQueries(db) {
+  // Function to record a day
+  async function insertDay(dayID, day) {
     try {
-      // Execute SQL query to insert waiter
-      await db.none('INSERT INTO waiters (waiter_name) VALUES ($1)', [waiterName]);
+      // Insert a day into the 'days' table
+      await db.none(`INSERT INTO days(dayID, day) VALUES ($1, $2)`, [dayID, day]);
     } catch (error) {
-      // Handle and log errors
-      console.error('Error inserting waiter:', error.message);
+      console.error(error);
     }
-  };
+  }
 
-  // Function to update waiter availability
-  const updateWaiterAvailability = async (waiterName, dayOfTheWeek) => {
+  // Function to record a waiter
+  async function insertWaiter(name) {
     try {
-      // Get the waiter_id based on waiterName
-      const waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-      
-      if (waiterId) {
-        // Use waiterId to update availability in the schedule table
-        for (const day of dayOfTheWeek) {
-          // Execute SQL query to get dayId for the selected day
-          const dayId = await db.oneOrNone('SELECT id FROM weekdays WHERE day = $1', [day]);
-          
-          if (dayId) {
-            // Execute SQL query to insert or update availability in the schedule table
-            await db.none('INSERT INTO schedule (waiter_id, day_id, available) VALUES ($1, $2, $3) ON CONFLICT (waiter_id, day_id) DO UPDATE SET available = EXCLUDED.available', [waiterId.id, dayId.id, true]);
-          } else {
-            console.error('No day found with the name', day);
-          }
-        }
-      } else {
-        console.error('No waiter found with the name', waiterName);
+      // Insert a waiter into the 'waiters' table with a default ID
+      await db.none(`INSERT INTO waiters(waiterID, name) VALUES (DEFAULT, $1)`, name);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to retrieve admin data
+  async function getAdminData() {
+    try {
+      // Retrieve waiter names and corresponding days from the database
+      let result = await db.manyOrNone(`SELECT waiters.name, days.day FROM admin JOIN days ON admin.dayID = days.dayID JOIN waiters ON admin.waiterID = waiters.waiterID`);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to reset the admin table
+  async function resetAdminTable() {
+    try {
+      // Delete all records from the 'admin' table
+      await db.none(`DELETE FROM admin`);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to set an admin entry
+  async function setAdminEntry(dayID, waiterID) {
+    try {
+      // Insert an admin entry into the 'admin' table
+      await db.none("INSERT INTO admin(dayID, waiterID) VALUES ($1, $2)", [dayID, waiterID]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to update admin data
+  async function updateAdmin(waiterID) {
+    try {
+      // Delete an admin entry by waiter ID
+      await db.none("DELETE FROM admin WHERE waiterID = $1", waiterID);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to retrieve a waiter by name
+  async function getWaiterByName(name) {
+    try {
+      // Retrieve a waiter by their name
+      let result = await db.oneOrNone("SELECT name FROM waiters WHERE name = $1", name);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to retrieve the days assigned to a waiter
+  async function getWaiterDaysAssigned(name) {
+    if (name) {
+      try {
+        // Retrieve the day IDs assigned to a waiter by name
+        let result = await db.manyOrNone("SELECT dayID FROM admin JOIN waiters ON admin.waiterID = waiters.waiterID WHERE name = $1", name);
+        return result;
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error('Error updating waiter availability:', error.message);
     }
-  };
-  
-//   const updateWaiterAvailability = async (waiterName, dayOfTheWeek) => {
-//     try {
-//       // Execute SQL query to get all days associated with waiterName
-//       const allDays = await db.manyOrNone('SELECT day FROM weekdays WHERE waiter_name = $1', [waiterName]);
-      
-//       // Filter days that are not in dayOfTheWeek
-//       for (const day of allDays) {
-//         if (!dayOfTheWeek.includes(day)) {
-//           // Execute SQL queries to delete unavailable shifts
-//           const dayId = await db.oneOrNone('SELECT id FROM weekdays WHERE day = $1', [day]);
-//           const waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-//           await db.none('DELETE FROM schedule WHERE waiter_id = $1 AND day_id = $2', [waiterId.id, dayId.id]);
-//         }
-//       }
+  }
 
-//       // Loop through selected days to update availability
-//       for (const day of dayOfTheWeek) {
-//         // Execute SQL query to get dayId for the selected day
-//         const dayId = await db.oneOrNone('SELECT id FROM weekdays WHERE day = $1', [day]);
-        
-//         // Check if dayId is null (no day found with the name)
-//         if (dayId === null) {
-//           console.error('No day found with the name', day);
-//           continue; // Skip this iteration
-//         }
-        
-//         // Execute SQL query to get waiterId
-//         const waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-        
-//         // Execute SQL query to insert availability into 'schedule' table
-//         await db.none('INSERT INTO schedule (waiter_id, day_id, available) VALUES ($1, $2, $3) ON CONFLICT (waiter_id, day_id) DO NOTHING', [waiterId.id, dayId.id, true]);
-//       }
-//     } catch (error) {
-//       // Handle and log errors
-//       console.error('Error updating waiter availability:', error.message);
-//     }
-//   };
-
-  // Function to get a waiter's schedule
-  const getWaiterSchedule = async (waiterName) => {
+  // Function to update the schedule for a waiter
+  async function updateWaiterSchedule(waiterID, dayToRemove, dayToAdd) {
     try {
-      // Execute SQL query to fetch waiter's schedule
-      const waiterSchedule = await db.manyOrNone('SELECT waiters.waiter_name, weekdays.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN weekdays ON schedule.day_id = weekdays.id WHERE waiters.waiter_name = $1', [waiterName]);
-      return waiterSchedule || []; // Return the schedule or an empty array if no data
+      // Delete the existing assignment and insert a new one for a waiter
+      await db.none("DELETE FROM admin WHERE waiterID = $1 AND dayID = $2", [waiterID, dayToRemove]);
+      console.log("Successfully deleted the assignment");
+      await db.none("INSERT INTO admin(dayID, waiterID) VALUES ($1, $2)", [dayToAdd, waiterID]);
     } catch (error) {
-      // Handle and log errors
-      console.error('Error fetching waiter schedule:', error.message);
+      console.error(error);
     }
-  };
+  }
 
-  // Function to get all waiter schedules
-  const getAllSchedules = async () => {
+  // Function to delete a waiter's assignment
+  async function deleteWaiterAssignment(waiterID, dayID) {
     try {
-      // Execute SQL query to fetch all waiter schedules
-      const allWaiterSchedules = await db.manyOrNone('SELECT waiters.waiter_name, weekdays.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN weekdays ON schedule.day_id = weekdays.id');
-      return allWaiterSchedules; // Return the schedules
+      // Delete a waiter's assignment for a specific day
+      await db.none("DELETE FROM admin WHERE waiterID = $1 AND dayID = $2", [waiterID, dayID]);
     } catch (error) {
-      // Handle and log errors
-      console.error('Error fetching all schedules:', error.message);
+      console.error(error);
     }
-  };
+  }
 
-  // Function to count available waiters for a given day
-  const countAvailableWaiters = async (dayOfTheWeek) => {
+  // Function to get a waiter's ID by name
+  async function getWaiterIDByName(name) {
     try {
-      // Execute SQL query to count available waiters for the given day
-      const waiterCount = await db.manyOrNone('SELECT COUNT(waiter_id) FROM schedule WHERE day_id = $1', [dayOfTheWeek]);
-      return waiterCount; // Return the waiter count
+      // Retrieve a waiter's ID by their name
+      let result = await db.oneOrNone("SELECT waiterID FROM waiters WHERE name = $1", name);
+      let waiterID = result.waiterid;
+      return waiterID;
     } catch (error) {
-      // Handle and log errors
-      console.error('Error counting available waiters:', error.message);
+      console.error(error);
     }
-  };
+  }
 
-  // Function to cancel all shifts for a waiter
-  const cancelAll = async (waiterName) => {
+  // Function to get the days assigned to a waiter by ID
+  async function getDaysAssignedToWaiter(waiterID) {
     try {
-      // Execute SQL query to get waiterId
-      const waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
-      
-      // Execute SQL query to delete all shifts for the waiter
-      await db.none('DELETE FROM schedule WHERE waiter_id = $1', [waiterId.id]);
+      // Retrieve the day IDs assigned to a waiter by their ID
+      let result = await db.manyOrNone("SELECT dayID FROM admin WHERE waiterID = $1", waiterID);
+      return result;
     } catch (error) {
-      // Handle and log errors
-      console.error('Error canceling all shifts:', error.message);
+      console.error(error);
     }
-  };
+  }
 
-  // Return an object containing all the defined functions
+  // Return all the functions as an object
   return {
+    resetAdminTable,
+    insertDay,
     insertWaiter,
-    updateWaiterAvailability,
-    getWaiterSchedule,
-    getAllSchedules,
-    countAvailableWaiters,
-    cancelAll,
+    getAdminData,
+    updateAdmin,
+    setAdminEntry,
+    getWaiterByName,
+    updateWaiterSchedule,
+    getWaiterIDByName,
+    deleteWaiterAssignment,
+    getDaysAssignedToWaiter,
+    getWaiterDaysAssigned
   };
 }
-
-
-

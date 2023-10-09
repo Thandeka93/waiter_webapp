@@ -1,68 +1,54 @@
-// Import necessary modules and dependencies
-import express from "express";
-import exphbs from 'express-handlebars';
-import { engine } from "express-handlebars";
-import bodyParser from "body-parser";
-import flash from "express-flash";
-import session from "express-session";
-import dotenv from "dotenv";
-import router from './routes/waiterRoutes.js';
+import express from 'express';
+import bodyParser from 'body-parser';
+import { engine } from 'express-handlebars';
+import flash from 'express-flash';
+import session from 'express-session';
+import pgPromise from 'pg-promise';
+import dotenv from'dotenv';
+import dbQueries from './services/query.js';
+import route from './routes/waiterRoutes.js';
 
 dotenv.config();
-
 const app = express();
-const hbs = exphbs.create();
 
-// Register Handlebars helper
-registerHandlebarsHelpers(hbs);
+app.use(express.static('public'));
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', './views');
+app.use(express.static('public'));
+app.use(express.static('images'))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(session({
+  secret: "no secret",
+  resave: false,
+  saveInitialized: false
+}));
+app.use(flash());
 
-configureApp(app);
+const connectionString =
+  process.env.PGDATABASE_URL ||
+  'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
 
-const PORT = process.env.PORT || 3002;
-startServer(app, PORT);
+const pgp = pgPromise();
+const db = pgp(connectionString);
 
-// Function to register Handlebars helper
-function registerHandlebarsHelpers(hbs) {
-  hbs.handlebars.registerHelper('includes', function (arr, item) {
-    // Check if 'arr' is an array
-    if (Array.isArray(arr)) {
-      // Check if 'arr' includes an item with the specified 'day'
-      return arr.some(schedule => schedule.day === item);
-    }
-    return false;
-  });
-}
+const queries = dbQueries(db);
+const routes= route(queries);
 
-function configureApp(app) {
-  app.engine("handlebars", engine());
-  app.set("view engine", "handlebars");
-  app.set("views", "./views");
+app.get("/",routes.home);
+app.all("/admin",routes.admin);
+app.get("/waiters/:username",routes.waiters);
+app.post("/waiters",routes.postWaiters);
+app.post("/clear", routes.clearSchedule);
+app.post("/update",routes.updateSchedule);
+app.post("/removeWaiter",routes.removeWaiter);
 
-  app.use(express.static("public"));
+const PORT= process.env.PORT||3004;
 
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
-
-  app.use(
-    session({
-      secret: "secret-key",
-      resave: true,
-      saveUninitialized: true,
-    })
-  );
-
-  app.use(flash());
-
-  // Use the custom router for handling routes
-  app.use('/', router);
-}
-
-// Function to start the server
-function startServer(app, port) {
-  app.listen(port, function () {
-    console.log(`app started on port: ${port}`);
-  });
-}
-
+app.listen(PORT,function(){
+    console.log("App starting on port "+PORT);
+});
 
 

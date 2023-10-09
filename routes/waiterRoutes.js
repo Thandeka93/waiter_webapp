@@ -1,94 +1,306 @@
-// Import necessary modules and dependencies
-import express from 'express'; // Import the Express framework
-import db from '../db.js'; // Import a database module
-import waiterService from '../services/query.js'; // Import a waiter service module
+// Define a default export function called 'routes' that takes a 'queries' parameter.
+export default function routes(queries) {
 
-// Create an Express router instance
-const router = express.Router();
+    // Initialize variables for error and success messages, and a username.
+    let error = "";
+    let success = "";
+    let username = "";
 
-// Create a waiterRoute instance by passing the database connection
-const waiterRoute = waiterService(db);
+    // Define a regular expression for validating usernames with at least 3 letters.
+    let regex = /^([a-zA-Z]{3,})$/;
 
-// Define a route for handling GET requests to the root path ('/')
-router.get('/', (req, res) => {
-    // Render the 'index' view
-    res.render('index');
-});
+    // Define an array of objects representing days of the week with IDs.
+    const days = [
+        { "day": "Monday", id: 1 },
+        { "day": "Tuesday", "id": 2 },
+        { "day": "Wednsday", "id": 3 },
+        { "day": "Thursday", "id": 4 },
+        { "day": "Friday", "id": 5 },
+        { "day": "Saturday", "id": 6 },
+        { "day": "Sunday", "id": 7 }
+    ];
 
-// Define a route for handling GET requests to the '/days' path
-router.get('/days', async (req, res) => {
-    try {
-        // List all the schedules for the week to see available waiters
-        const allSchedules = await waiterRoute.getAllSchedules();
-        // List days and the number of available waiters
-        res.render('admin', {
-            allSchedules
+    // Define an asynchronous function 'home' that handles rendering the "index" page.
+    async function home(req, res) {
+        res.render("index", {
+            // Render the "index" page with no additional data.
         });
-    } catch (error) {
-        console.error('Error fetching schedules:', error.message);
-
     }
-});
 
-// Define a route for handling POST requests to update waiter information
-router.post('/waiters/:username/update', async (req, res) => {
-    try {
-        const waiterName = req.params.username;
-        const dayOfTheWeek = req.body.days || [];
+    // Define an asynchronous function 'admin' that handles rendering the "admin" page.
+    async function admin(req, res) {
 
-        // Store the selected days in a session variable
-        req.session.selectedDays = dayOfTheWeek;
+        // Initialize arrays and variables for storing schedule data.
+        let monday = [];
+        let tuesday = [];
+        let wednsday = [];
+        let thursday = [];
+        let friday = [];
+        let saturday = [];
+        let sunday = [];
+        let names = [];
 
-        // Get the waiter name and days and insert them into the tables
-        await waiterRoute.updateWaiterAvailability(waiterName, dayOfTheWeek); // Call the function for updating the name and days
-        console.log(waiterName, dayOfTheWeek);
-        // Redirect to the update page for the specific waiter
-        res.redirect(`/waiters/${waiterName}/update`);
-    } catch (error) {
-        console.error('Error fetching schedules:', error.message);
+        // Fetch the admin schedule data from the 'queries' object.
+        let schedule = await queries.getAdminData();
 
-    }
-});
-
-// Define a route for handling GET requests to the waiter update page
-router.get('/waiters/:username/update', async (req, res) => {
-    try {
-        const name = req.params.username;
-        // Get the schedule for the specified waiter
-        const waiterSchedule = await waiterRoute.getWaiterSchedule(name);
-
-        // Retrieve the selected days from the session
-        const selectedDays = req.session.selectedDays || [];
-
-        // Render the 'waiters' view for updating waiter information
-        res.render('waiters', {
-            waiterSchedule,
-            username: name,
-            selectedDays, // Pass the selected days to the template
+        if (schedule) {
+            // Loop through the schedule data to organize it by day and names.
+            for (let i = 0; i < schedule.length; ++i) {
+                var entry = schedule[i];
+                if (!names.includes(entry.name)) {
+                    names.push(entry.name);
+                }
+                // Categorize entries based on the day of the week.
+                switch (entry.day) {
+                    case "Monday":
+                        monday.push(entry.name);
+                        break;
+                    case "Tuesday":
+                        tuesday.push(entry.name);
+                        break;
+                    case "Wednsday":
+                        wednsday.push(entry.name);
+                        break;
+                    case "Thursday":
+                        thursday.push(entry.name);
+                        break;
+                    case "Friday":
+                        friday.push(entry.name);
+                        break;
+                    case "Saturday":
+                        saturday.push(entry.name);
+                        break;
+                    case "Sunday":
+                        sunday.push(entry.name);
+                        break;
+                }
+            }
+        }
+        // Render the "admin" page with organized data.
+        res.render("admin", {
+            monday,
+            tuesday,
+            wednsday,
+            thursday,
+            friday,
+            saturday,
+            sunday,
+            days,
+            names
         });
-    } catch (error) {
-        console.error('Error fetching schedules:', error.message);
-
     }
-});
 
-// Define a route for handling GET requests to view waiter information
-router.get('/waiters/:username', async (req, res) => {
-    try {
-        const name = req.params.username;
-        // Get the schedule for the specified waiter
-        const waiterSchedule = await waiterRoute.getWaiterSchedule(name);
-        // Render the 'waiters' view for viewing waiter information
-        res.render('waiters', {
-            waiterSchedule,
-            username: name
+    // Define an asynchronous function 'waiters' that handles rendering the "waiters" page.
+    async function waiters(req, res) {
+        // Initialize variables and flags for waiter information.
+        let input = req.params.username;
+        let waiterDays = [];
+        let monChecked = false;
+        let tuesChecked = false;
+        let wedChecked = false;
+        let thurChecked = false;
+        let friChecked = false;
+        let satChecked = false;
+        let sunChecked = false;
+
+        if (input) {
+            // Trim and format the input username.
+            var trimmed = input.trim();
+            var cap = "";
+            var low = "";
+
+            for (let i = 0; i < trimmed.length - 1; ++i) {
+                cap = trimmed.charAt(0).toUpperCase();
+                low += trimmed.charAt(i + 1).toLowerCase();
+            }
+            username = cap + low;
+        }
+
+        if (regex.test(username)) {
+            // Fetch waiter days based on the validated username.
+            waiterDays = await queries.getWaiterDaysAssigned(username);
+
+            for (let i = 0; i < waiterDays.length; ++i) {
+                let day = waiterDays[i].dayid;
+
+                // Set flags for checked days based on fetched data.
+                switch (day) {
+                    case 1:
+                        monChecked = true;
+                        break;
+                    case 2:
+                        tuesChecked = true;
+                        break;
+                    case 3:
+                        wedChecked = true;
+                        break;
+                    case 4:
+                        thurChecked = true;
+                        break;
+                    case 5:
+                        friChecked = true;
+                        break;
+                    case 6:
+                        satChecked = true;
+                        break;
+                    case 7:
+                        sunChecked = true;
+                        break;
+                }
+            }
+        }
+
+        // Flash error and success messages and render the "waiters" page.
+        req.flash("error", getError());
+        req.flash("success", getSuccess());
+
+        res.render("waiters", {
+            monChecked,
+            tuesChecked,
+            wedChecked,
+            thurChecked,
+            friChecked,
+            satChecked,
+            sunChecked,
+            username
         });
-    } catch (error) {
-        console.error('Error fetching schedules:', error.message);
 
+        // Reset the 'success' message.
+        success = "";
     }
-});
 
-// Export the router to make it available for use in other modules
-export default router;
+    // Define an asynchronous function 'postWaiters' that handles POST requests for the "waiters" page.
+    async function postWaiters(req, res) {
+        // Extract data from the request.
+        let days = req.body.day;
+        let waiterID = 0;
 
+        if (regex.test(username)) {
+            // Validate username using the regex pattern.
+
+            waiterID = await queries.getWaiterIDByName(username);
+
+            if (waiterID == null || waiterID == undefined) {
+                // If waiter ID is not found, record the waiter.
+                await queries.insertWaiter(username);
+                waiterID = await queries.getWaiterIDByName(username);
+            }
+
+            if (days) {
+                // Check the number of selected days.
+                if (days.length < 3 || days.length > 5) {
+                    error = "Select a minimum of 3 and a maximum of 5 days";
+                    success = "";
+                } else {
+                    error = "";
+                    success = "Shift updated successfully";
+
+                    // Update the database with selected days.
+                    await queries.updateAdmin(waiterID);
+
+                    for (let i = 0; i < days.length; ++i) {
+                        var day = Number(days[i]);
+                        await queries.setAdminEntry(day, waiterID);
+                    }
+                }
+            }
+        } else {
+            error = "Use only alphabetical characters in the name";
+        }
+
+        // Redirect to the "waiters" page with the updated data.
+        res.redirect("/waiters/" + username);
+    }
+
+    // Define an asynchronous function 'clearSchedule' that handles clearing the schedule.
+    async function clearSchedule(req, res) {
+        try {
+            // Reset the schedule data in the database.
+            await queries.resetAdminTable();
+            res.redirect("/admin");
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    // Define an asynchronous function 'updateSchedule' that handles updating the schedule.
+    async function updateSchedule(req, res) {
+        // Extract data from the request.
+        let name = req.body.waiterName;
+        let dayName1 = req.body.fromDay;
+        let dayName2 = req.body.toDay;
+        let day1 = 0;
+        let day2 = 0;
+
+        let waiterID = await queries.getWaiterIDByName(name);
+
+        for (let i = 0; i < days.length; ++i) {
+            var day = days[i];
+
+            if (day.day == dayName1) {
+                day1 = day.id;
+            } else if (day.day == dayName2) {
+                day2 = day.id;
+            }
+        }
+
+        try {
+            // Update the schedule in the database.
+            await queries.updateWaiterSchedule(waiterID, day1, day2);
+            res.redirect("/admin");
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    // Define an asynchronous function 'removeWaiter' that handles removing a waiter from the schedule.
+    async function removeWaiter(req, res) {
+        // Extract data from the request.
+        let name = req.body.waiterDelete;
+        let waiterID = await queries.getWaiterIDByName(name);
+        let dayName = req.body.deleteDay;
+        let dayID = 0;
+
+        for (let i = 0; i < days.length; ++i) {
+            var day = days[i];
+
+            if (day.day == dayName) {
+                dayID = day.id;
+            }
+        }
+        try {
+            // Remove a waiter from the schedule in the database.
+            await queries.deleteWaiterAssignment(waiterID, dayID);
+        } catch (err) {
+            console.log(err);
+        }
+
+        // Redirect to the "admin" page after removing the waiter.
+        res.redirect("/admin");
+    }
+
+    // Define a function 'getError' that returns the current error message.
+    function getError() {
+        return error;
+    }
+
+    // Define a function 'getSuccess' that returns the current success message.
+    function getSuccess() {
+        return success;
+    }
+
+   
+
+    // Return an object containing all the defined functions for exporting.
+    return {
+        home,
+        admin,
+        waiters,
+        clearSchedule,
+        getError,
+        postWaiters,
+        updateSchedule,
+        removeWaiter
+    
+    }
+}

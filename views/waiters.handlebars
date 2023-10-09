@@ -1,38 +1,39 @@
+<div class="container waiters">
 <h1>NOLU'S COFFEE SHOP</h1>
 <h2>{{username}}'s Schedule</h2>
-<h3>Selected Days:</h3>
-<ul>
-    {{#each selectedDays}}
-    <li>{{this}}</li>
-    {{/each}}
-</ul>
-<ul>
-    {{#each waiterSchedule}}
-    <li>{{this.waiter_name}} - {{this.day}}</li>
-    {{/each}}
-</ul>
+<h4>Please choose a minimum of 3 days and a maximum of 5 days</h4>
+<p class="error">{{messages.error}}</p>
+<p class="success">{{messages.success}}</p>
+<form action="/waiters" method="post" id="waitersForm">
+<div class="checkbox">
+<input type ="checkbox" value="1" id="Mon" name="day" /><label for="Mon" id="red">Monday</label><br>
+<input type ="checkbox" value="2" id="Tues"  name="day" /><label for="Tues">Tuesday</label><br>
+<input type ="checkbox" value="3" id="Wed" name="day"  /><label for="Wed">Wednesday</label><br>
+<input type ="checkbox" value="4" id="Thurs" name="day"  /><label for="Thurs">Thursday</label><br>
+<input type ="checkbox" value="5" id="Fri" name="day"/><label for="Fri">Friday</label><br>
+<input type ="checkbox" value="6" id="Sat" name="day"/><label for="Sat">Saturday</label><br>
+<input type ="checkbox" value="7" id="Sun" name="day" /><label for="Sun">Sunday</label><br>
+</div>
 
-<h3>Instructions</h3>
-<ul>
-    <li>Select days by checking the checkbox</li>
-    <li>Click update</li>
-
-  </ul>
-<form action="/waiters/{{username}}/update" method="post">
-    <label>Select Days:</label><br>
-    <input type="checkbox" id="Monday" name="days" value="Monday" {{#if (includes waiterSchedule 'Monday')}}checked{{/if}}>
-    <label for="Monday">Monday</label><br>
-    <input type="checkbox" id="Tuesday" name="days" value="Tuesday" {{#if (includes waiterSchedule 'Tuesday')}}checked{{/if}}>
-    <label for="Tuesday">Tuesday</label><br>
-    <input type="checkbox" id="Wednesday" name="days" value="Wednesday" {{#if (includes waiterSchedule 'Wednesday')}}checked{{/if}}>
-    <label for="Wednesday">Wednesday</label><br>
-    <input type="checkbox" id="Thursday" name="days" value="Thursday" {{#if (includes waiterSchedule 'Thursday')}}checked{{/if}}>
-    <label for="Thursday">Thursday</label><br>
-    <input type="checkbox" id="Friday" name="days" value="Friday" {{#if (includes waiterSchedule 'Friday')}}checked{{/if}}>
-    <label for="Friday">Friday</label><br>
-    <input type="checkbox" id="Saturday" name="days" value="Saturday" {{#if (includes waiterSchedule 'Saturday')}}checked{{/if}}>
-    <label for="Saturday">Saturday</label><br>
-    <input type="checkbox" id="Sunday" name="days" value="Sunday" {{#if (includes waiterSchedule 'Sunday')}}checked{{/if}}>
-    <label for="Sunday">Sunday</label><br>
-    <input type="submit" value="Update">
+<button type="submit"  id="update">Update</button>
 </form>
+</div>
+<script>
+setTimeout(function(){
+    document.querySelector(".error").style.display="none";
+},3000);
+
+document.querySelector(".error").style.display="block";
+
+setTimeout(function(){
+    document.querySelector(".success").style.display="none";
+},3000);
+
+document.querySelector(".success").style.display="block";
+</script>
+
+
+
+
+
+
