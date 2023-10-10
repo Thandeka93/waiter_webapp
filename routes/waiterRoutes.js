@@ -1,5 +1,5 @@
 // Define a default export function called 'routes' that takes a 'queries' parameter.
-export default function routes(queries) {
+export default function appRoutes(queries) {
 
     // Initialize variables for error and success messages, and a username.
     let error = "";
@@ -174,43 +174,42 @@ export default function routes(queries) {
         // Extract data from the request.
         let days = req.body.day;
         let waiterID = 0;
-
+      
         if (regex.test(username)) {
-            // Validate username using the regex pattern.
-
-            waiterID = await queries.getWaiterIDByName(username);
-
-            if (waiterID == null || waiterID == undefined) {
-                // If waiter ID is not found, record the waiter.
+          // Validate username using the regex pattern.
+      
+          waiterID = await queries.getWaiterIDByName(username);
+      
+          if (waiterID == null || waiterID == undefined) {
+            //If waiter ID is not found, insert a new waiter.
                 await queries.insertWaiter(username);
-                waiterID = await queries.getWaiterIDByName(username);
-            }
-
+               waiterID = await queries.getWaiterIDByName(username);
+          } else {
+            // Continue with the insertion and update logic.
             if (days) {
-                // Check the number of selected days.
-                if (days.length < 3 || days.length > 5) {
-                    error = "Select a minimum of 3 and a maximum of 5 days";
-                    success = "";
-                } else {
-                    error = "";
-                    success = "Shift updated successfully";
-
-                    // Update the database with selected days.
-                    await queries.updateAdmin(waiterID);
-
-                    for (let i = 0; i < days.length; ++i) {
-                        var day = Number(days[i]);
-                        await queries.setAdminEntry(day, waiterID);
-                    }
+              // Check the number of selected days.
+              if (days.length < 3 || days.length > 5) {
+                error = "Select a minimum of 3 and a maximum of 5 days";
+                success = "";
+              } else {
+                error = "";
+                success = "Shift updated successfully";
+      
+                // Update the database with selected days.
+                await queries.updateAdmin(waiterID);
+      
+                for (let i = 0; i < days.length; ++i) {
+                  var day = Number(days[i]);
+                  await queries.setAdminEntry(day, waiterID);
                 }
+              }
             }
-        } else {
-            error = "Use only alphabetical characters in the name";
-        }
-
+          }
+        } 
+      
         // Redirect to the "waiters" page with the updated data.
         res.redirect("/waiters/" + username);
-    }
+      }
 
     // Define an asynchronous function 'clearSchedule' that handles clearing the schedule.
     async function clearSchedule(req, res) {
@@ -288,8 +287,6 @@ export default function routes(queries) {
     function getSuccess() {
         return success;
     }
-
-   
 
     // Return an object containing all the defined functions for exporting.
     return {

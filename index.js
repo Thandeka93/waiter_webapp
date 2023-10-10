@@ -5,8 +5,8 @@ import flash from 'express-flash';
 import session from 'express-session';
 import pgPromise from 'pg-promise';
 import dotenv from'dotenv';
-import dbQueries from './services/query.js';
-import route from './routes/waiterRoutes.js';
+import createDatabaseQueries from './services/query.js';
+import appRoutes from './routes/waiterRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(session({
-  secret: "no secret",
+  secret: "secret-key",
   resave: false,
   saveInitialized: false
 }));
@@ -34,8 +34,8 @@ const connectionString =
 const pgp = pgPromise();
 const db = pgp(connectionString);
 
-const queries = dbQueries(db);
-const routes= route(queries);
+const queries = createDatabaseQueries(db);
+const routes= appRoutes(queries);
 
 app.get("/",routes.home);
 app.all("/admin",routes.admin);

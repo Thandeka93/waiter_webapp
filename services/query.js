@@ -12,12 +12,12 @@ export default function createDatabaseQueries(db) {
   // Function to record a waiter
   async function insertWaiter(name) {
     try {
-      // Insert a waiter into the 'waiters' table with a default ID
-      await db.none(`INSERT INTO waiters(waiterID, name) VALUES (DEFAULT, $1)`, name);
+        // Insert a waiter into the 'waiters' table with a default ID
+        await db.none(`INSERT INTO waiters(waiterID, name) VALUES (DEFAULT, $1)`, name);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
-  }
+}
 
   // Function to retrieve admin data
   async function getAdminData() {
@@ -111,12 +111,32 @@ export default function createDatabaseQueries(db) {
     try {
       // Retrieve a waiter's ID by their name
       let result = await db.oneOrNone("SELECT waiterID FROM waiters WHERE name = $1", name);
-      let waiterID = result.waiterid;
-      return waiterID;
+  
+      if (result) {
+        let waiterID = result.waiterid;
+        return waiterID;
+      } else {
+        // Handle the case where no waiter with the given name was found
+        return null; 
+      }
     } catch (error) {
       console.error(error);
+      // Handle the database error appropriately
+      throw error; 
     }
   }
+  
+
+  // async function getWaiterIDByName(name) {
+  //   try {
+  //     // Retrieve a waiter's ID by their name
+  //     let result = await db.oneOrNone("SELECT waiterID FROM waiters WHERE name = $1", name);
+  //     let waiterID = result.waiterid;
+  //     return waiterID;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   // Function to get the days assigned to a waiter by ID
   async function getDaysAssignedToWaiter(waiterID) {
