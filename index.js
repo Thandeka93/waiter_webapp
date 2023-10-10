@@ -37,7 +37,7 @@ const db = pgp(connectionString);
 const queries = createDatabaseQueries(db);
 const routes= appRoutes(queries);
 
-app.get("/",routes.home);
+app.get("/",routes.index);
 app.all("/admin",routes.admin);
 app.get("/waiters/:username",routes.waiters);
 app.post("/waiters",routes.postWaiters);

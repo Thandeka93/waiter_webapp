@@ -21,7 +21,7 @@ export default function appRoutes(queries) {
     ];
 
     // Define an asynchronous function 'home' that handles rendering the "index" page.
-    async function home(req, res) {
+    async function index(req, res) {
         res.render("index", {
             // Render the "index" page with no additional data.
         });
@@ -174,42 +174,42 @@ export default function appRoutes(queries) {
         // Extract data from the request.
         let days = req.body.day;
         let waiterID = 0;
-      
+
         if (regex.test(username)) {
-          // Validate username using the regex pattern.
-      
-          waiterID = await queries.getWaiterIDByName(username);
-      
-          if (waiterID == null || waiterID == undefined) {
-            //If waiter ID is not found, insert a new waiter.
+            // Validate username using the regex pattern.
+
+            waiterID = await queries.getWaiterIDByName(username);
+
+            if (waiterID == null || waiterID == undefined) {
+                //If waiter ID is not found, insert a new waiter.
                 await queries.insertWaiter(username);
-               waiterID = await queries.getWaiterIDByName(username);
-          } else {
-            // Continue with the insertion and update logic.
-            if (days) {
-              // Check the number of selected days.
-              if (days.length < 3 || days.length > 5) {
-                error = "Select a minimum of 3 and a maximum of 5 days";
-                success = "";
-              } else {
-                error = "";
-                success = "Shift updated successfully";
-      
-                // Update the database with selected days.
-                await queries.updateAdmin(waiterID);
-      
-                for (let i = 0; i < days.length; ++i) {
-                  var day = Number(days[i]);
-                  await queries.setAdminEntry(day, waiterID);
+                waiterID = await queries.getWaiterIDByName(username);
+            } else {
+                // Continue with the insertion and update logic.
+                if (days) {
+                    // Check the number of selected days.
+                    if (days.length < 3 || days.length > 5) {
+                        error = "Select a minimum of 3 and a maximum of 5 days";
+                        success = "";
+                    } else {
+                        error = "";
+                        success = "Shift updated successfully";
+
+                        // Update the database with selected days.
+                        await queries.updateAdmin(waiterID);
+
+                        for (let i = 0; i < days.length; ++i) {
+                            var day = Number(days[i]);
+                            await queries.setAdminEntry(day, waiterID);
+                        }
+                    }
                 }
-              }
             }
-          }
-        } 
-      
+        }
+
         // Redirect to the "waiters" page with the updated data.
         res.redirect("/waiters/" + username);
-      }
+    }
 
     // Define an asynchronous function 'clearSchedule' that handles clearing the schedule.
     async function clearSchedule(req, res) {
@@ -224,58 +224,12 @@ export default function appRoutes(queries) {
 
     // Define an asynchronous function 'updateSchedule' that handles updating the schedule.
     async function updateSchedule(req, res) {
-        // Extract data from the request.
-        let name = req.body.waiterName;
-        let dayName1 = req.body.fromDay;
-        let dayName2 = req.body.toDay;
-        let day1 = 0;
-        let day2 = 0;
 
-        let waiterID = await queries.getWaiterIDByName(name);
-
-        for (let i = 0; i < days.length; ++i) {
-            var day = days[i];
-
-            if (day.day == dayName1) {
-                day1 = day.id;
-            } else if (day.day == dayName2) {
-                day2 = day.id;
-            }
-        }
-
-        try {
-            // Update the schedule in the database.
-            await queries.updateWaiterSchedule(waiterID, day1, day2);
-            res.redirect("/admin");
-        } catch (err) {
-            console.log(err);
-        }
     }
 
     // Define an asynchronous function 'removeWaiter' that handles removing a waiter from the schedule.
     async function removeWaiter(req, res) {
-        // Extract data from the request.
-        let name = req.body.waiterDelete;
-        let waiterID = await queries.getWaiterIDByName(name);
-        let dayName = req.body.deleteDay;
-        let dayID = 0;
 
-        for (let i = 0; i < days.length; ++i) {
-            var day = days[i];
-
-            if (day.day == dayName) {
-                dayID = day.id;
-            }
-        }
-        try {
-            // Remove a waiter from the schedule in the database.
-            await queries.deleteWaiterAssignment(waiterID, dayID);
-        } catch (err) {
-            console.log(err);
-        }
-
-        // Redirect to the "admin" page after removing the waiter.
-        res.redirect("/admin");
     }
 
     // Define a function 'getError' that returns the current error message.
@@ -283,21 +237,22 @@ export default function appRoutes(queries) {
         return error;
     }
 
-    // Define a function 'getSuccess' that returns the current success message.
-    function getSuccess() {
-        return success;
-    }
+        // Define a function 'getSuccess' that returns the current success message.
+        function getSuccess() {
+            return success;
+        }
 
-    // Return an object containing all the defined functions for exporting.
-    return {
-        home,
-        admin,
-        waiters,
-        clearSchedule,
-        getError,
-        postWaiters,
-        updateSchedule,
-        removeWaiter
-    
+        // Return an object containing all the defined functions for exporting.
+        return {
+            index,
+            admin,
+            waiters,
+            clearSchedule,
+            getError,
+            postWaiters,
+            updateSchedule,
+            removeWaiter,
+            getSuccess
+
+        }
     }
-}
