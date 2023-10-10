@@ -2,49 +2,53 @@
 <h1>NOLU'S COFFEE SHOP</h1>
 <h2>Weekly Roster</h2>
 <div class="grid">
-<div id="mon">
 
+<div id="mon" class="schedule-day">
 <h3>Mon</h3>
 {{#each monday}}
 <p class="monP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="tues">
+
+<div id="tues" class="schedule-day">
 <h3>Tues</h3>
 {{#each tuesday}}
 <p class="tueP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="wed"><h3>Wed</h3>
+
+<div id="wed" class="schedule-day">
+  <h3>Wed</h3>
 {{#each wednsday}}
 <p class="wedP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="thur"><h3>Thur</h3>
+
+<div id="thur"class="schedule-day">
+  <h3>Thur</h3>
 {{#each thursday}}
 <p class="thurP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="fri"><h3>Fri</h3>
+
+<div id="fri" class="schedule-day">
+  <h3>Fri</h3>
 {{#each friday}}
 <p class="friP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="sat"><h3>Sat</h3>
+
+<div id="sat" class="schedule-day">
+  <h3>Sat</h3>
 {{#each saturday}}
 <p class="satP">{{this}}</p>
-
 {{/each}}
 </div>
-<div id="sun"><h3>Sun</h3>
+
+<div id="sun" class="schedule-day">
+  <h3>Sun</h3>
 {{#each sunday}}
 <p class="sunP">{{this}}</p>
-
 {{/each}}
 </div>
 </div>
@@ -94,10 +98,24 @@
   <button type="submit" id="clear">Reset</button>
 </form>
 </div>
+
+
 <script>
 
+document.addEventListener("DOMContentLoaded", function () {
+  const scheduleDays = document.querySelectorAll(".schedule-day");
 
-
+  scheduleDays.forEach(function (day) {
+    const numberOfPeople = day.querySelectorAll("p").length;
+    if (numberOfPeople === 1) {
+      day.classList.add("red-bg");
+    } else if (numberOfPeople === 2) {
+      day.classList.add("orange-bg");
+    } else if (numberOfPeople >= 3) {
+      day.classList.add("green-bg");
+    }
+  });
+});
 
 
 // Add an event listener to the clear button
