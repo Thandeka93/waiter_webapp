@@ -13,7 +13,7 @@ export default function appRoutes(queries) {
     const days = [
         { "day": "Monday", id: 1 },
         { "day": "Tuesday", "id": 2 },
-        { "day": "Wednsday", "id": 3 },
+        { "day": "Wednesday", "id": 3 },
         { "day": "Thursday", "id": 4 },
         { "day": "Friday", "id": 5 },
         { "day": "Saturday", "id": 6 },
@@ -33,7 +33,7 @@ export default function appRoutes(queries) {
         // Initialize arrays and variables for storing schedule data.
         let monday = [];
         let tuesday = [];
-        let wednsday = [];
+        let wednesday = [];
         let thursday = [];
         let friday = [];
         let saturday = [];
@@ -58,8 +58,8 @@ export default function appRoutes(queries) {
                     case "Tuesday":
                         tuesday.push(entry.name);
                         break;
-                    case "Wednsday":
-                        wednsday.push(entry.name);
+                    case "Wednesday":
+                        wednesday.push(entry.name);
                         break;
                     case "Thursday":
                         thursday.push(entry.name);
@@ -80,7 +80,7 @@ export default function appRoutes(queries) {
         res.render("admin", {
             monday,
             tuesday,
-            wednsday,
+            wednesday,
             thursday,
             friday,
             saturday,
