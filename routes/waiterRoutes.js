@@ -7,7 +7,9 @@ export default function appRoutes(queries) {
     let username = "";
 
     // Define a regular expression for validating usernames with at least 3 letters.
-    let regex = /^([a-zA-Z]{3,})$/;
+    // let regex = /^([a-zA-Z]{3,})$/;
+    const regex = new RegExp("^[a-zA-Z]{3,}$");
+
 
     // Define an array of objects representing days of the week with IDs.
     const days = [

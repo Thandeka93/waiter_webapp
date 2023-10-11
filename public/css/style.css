@@ -18,7 +18,7 @@ body{
 
   display:grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  background-color: rgb(218, 4, 4);
+  background-color: #9c5d3d;
   }
 
   .error{
