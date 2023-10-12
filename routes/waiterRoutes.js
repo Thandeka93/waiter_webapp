@@ -7,20 +7,7 @@ export default function appRoutes(queries) {
     let username = "";
 
     // Define a regular expression for validating usernames with at least 3 letters.
-    // let regex = /^([a-zA-Z]{3,})$/;
     const regex = new RegExp("^[a-zA-Z]{3,}$");
-
-
-    // Define an array of objects representing days of the week with IDs.
-    const days = [
-        { "day": "Monday", id: 1 },
-        { "day": "Tuesday", "id": 2 },
-        { "day": "Wednesday", "id": 3 },
-        { "day": "Thursday", "id": 4 },
-        { "day": "Friday", "id": 5 },
-        { "day": "Saturday", "id": 6 },
-        { "day": "Sunday", "id": 7 }
-    ];
 
     // Define an asynchronous function 'home' that handles rendering the "index" page.
     async function index(req, res) {
@@ -30,8 +17,7 @@ export default function appRoutes(queries) {
     }
 
     // Define an asynchronous function 'admin' that handles rendering the "admin" page.
-    async function admin(req, res) {
-
+     async function admin(req, res) {
         // Initialize arrays and variables for storing schedule data.
         let monday = [];
         let tuesday = [];
@@ -78,7 +64,11 @@ export default function appRoutes(queries) {
                 }
             }
         }
-        // Render the "admin" page with organized data.
+        
+        // Fetch the days from the 'queries' object
+        const days = await queries.getDays();
+
+        // Render the "admin" page with organized data and fetched days
         res.render("admin", {
             monday,
             tuesday,
@@ -87,89 +77,54 @@ export default function appRoutes(queries) {
             friday,
             saturday,
             sunday,
-            days,
+            days, // Use the fetched days from the database
             names
         });
     }
 
     // Define an asynchronous function 'waiters' that handles rendering the "waiters" page.
-    async function waiters(req, res) {
-        // Initialize variables and flags for waiter information.
-        let input = req.params.username;
-        let waiterDays = [];
-        let monChecked = false;
-        let tuesChecked = false;
-        let wedChecked = false;
-        let thurChecked = false;
-        let friChecked = false;
-        let satChecked = false;
-        let sunChecked = false;
+async function waiters(req, res) {
+    // Initialize variables and flags for waiter information.
+    let input = req.params.username;
+    let waiterDays = [];
+    let daysChecked = new Array(7).fill(false); // An array to store day checked flags
 
-        if (input) {
-            // Trim and format the input username.
-            var trimmed = input.trim();
-            var cap = "";
-            var low = "";
-
-            for (let i = 0; i < trimmed.length - 1; ++i) {
-                cap = trimmed.charAt(0).toUpperCase();
-                low += trimmed.charAt(i + 1).toLowerCase();
-            }
-            username = cap + low;
-        }
-
-        if (regex.test(username)) {
-            // Fetch waiter days based on the validated username.
-            waiterDays = await queries.getWaiterDaysAssigned(username);
-
-            for (let i = 0; i < waiterDays.length; ++i) {
-                let day = waiterDays[i].dayid;
-
-                // Set flags for checked days based on fetched data.
-                switch (day) {
-                    case 1:
-                        monChecked = true;
-                        break;
-                    case 2:
-                        tuesChecked = true;
-                        break;
-                    case 3:
-                        wedChecked = true;
-                        break;
-                    case 4:
-                        thurChecked = true;
-                        break;
-                    case 5:
-                        friChecked = true;
-                        break;
-                    case 6:
-                        satChecked = true;
-                        break;
-                    case 7:
-                        sunChecked = true;
-                        break;
-                }
-            }
-        }
-
-        // Flash error and success messages and render the "waiters" page.
-        req.flash("error", getError());
-        req.flash("success", getSuccess());
-
-        res.render("waiters", {
-            monChecked,
-            tuesChecked,
-            wedChecked,
-            thurChecked,
-            friChecked,
-            satChecked,
-            sunChecked,
-            username
-        });
-
-        // Reset the 'success' message.
-        success = "";
+    if (input) {
+        // Trim and format the input username.
+        var trimmed = input.trim();
+        var cap = trimmed.charAt(0).toUpperCase();
+        var low = trimmed.slice(1).toLowerCase();
+        username = cap + low;
     }
+
+    if (regex.test(username)) {
+        // Fetch waiter days based on the validated username.
+        waiterDays = await queries.getWaiterDaysAssigned(username);
+
+        for (let i = 0; i < waiterDays.length; ++i) {
+            let day = waiterDays[i].dayid;
+
+            // Set flags for checked days based on fetched data.
+            if (day >= 1 && day <= 7) {
+                daysChecked[day - 1] = true;
+            }
+        }
+    }
+
+    // Flash error and success messages and render the "waiters" page.
+    req.flash("error", getError());
+    req.flash("success", getSuccess());
+
+    res.render("waiters", {
+        daysChecked,
+        username
+    });
+
+    // Reset the 'success' message.
+    success = "";
+}
+
+   
 
     // Define an asynchronous function 'postWaiters' that handles POST requests for the "waiters" page.
     async function postWaiters(req, res) {
@@ -191,7 +146,7 @@ export default function appRoutes(queries) {
                 if (days) {
                     // Check the number of selected days.
                     if (days.length < 3 || days.length > 5) {
-                        error = "Select a minimum of 3 and a maximum of 5 days";
+                        error = "Select a min. of 3 and a max. of 5 days";
                         success = "";
                     } else {
                         error = "";

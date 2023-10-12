@@ -6,13 +6,15 @@
 <p class="success">{{messages.success}}</p>
 <form action="/waiters" method="post" id="waitersForm">
 <div class="checkbox">
-<input type ="checkbox" value="1" id="Mon" name="day" /><label for="Mon" id="red">Monday</label><br>
-<input type ="checkbox" value="2" id="Tues"  name="day" /><label for="Tues">Tuesday</label><br>
-<input type ="checkbox" value="3" id="Wed" name="day"  /><label for="Wed">Wednesday</label><br>
-<input type ="checkbox" value="4" id="Thurs" name="day"  /><label for="Thurs">Thursday</label><br>
-<input type ="checkbox" value="5" id="Fri" name="day"/><label for="Fri">Friday</label><br>
-<input type ="checkbox" value="6" id="Sat" name="day"/><label for="Sat">Saturday</label><br>
-<input type ="checkbox" value="7" id="Sun" name="day" /><label for="Sun">Sunday</label><br>
+<input type="checkbox" value="1" id="Mon" name="day" {{#if daysChecked.[0]}}checked{{/if}} /><label for="Mon" id="red">Monday</label><br>
+<input type="checkbox" value="2" id="Tues" name="day" {{#if daysChecked.[1]}}checked{{/if}} /><label for="Tues">Tuesday</label><br>
+<input type="checkbox" value="3" id="Wed" name="day" {{#if daysChecked.[2]}}checked{{/if}} /><label for="Wed">Wednesday</label><br>
+<input type="checkbox" value="4" id="Thurs" name="day" {{#if daysChecked.[3]}}checked{{/if}} /><label for="Thurs">Thursday</label><br>
+<input type="checkbox" value="5" id="Fri" name="day" {{#if daysChecked.[4]}}checked{{/if}} /><label for="Fri">Friday</label><br>
+<input type="checkbox" value="6" id="Sat" name="day" {{#if daysChecked.[5]}}checked{{/if}} /><label for="Sat">Saturday</label><br>
+<input type="checkbox" value="7" id="Sun" name="day" {{#if daysChecked.[6]}}checked{{/if}} /><label for="Sun">Sunday</label><br>
+
+
 </div>
 
 <button type="submit"  id="update">Update</button>

@@ -8,8 +8,14 @@ export default function createDatabaseQueries(db) {
 
   // Function to insert a waiter into the 'waiters' table
   const insertWaiter = async (name) => {
-    await db.none(`INSERT INTO waiters(waiterID, name) VALUES (DEFAULT, $1)`, name);
+    await db.none(`INSERT INTO waiters(name) VALUES ($1)`, name);
   };
+
+  // Function to retrieve days from the 'days' table
+  const getDays = async () => {
+    return db.manyOrNone(`SELECT * FROM days`);
+  };
+
 
   // Function to retrieve admin data with waiter names and assigned days
   const getAdminData = async () => {
@@ -76,6 +82,7 @@ export default function createDatabaseQueries(db) {
     resetAdminTable,
     insertDay,
     insertWaiter,
+    getDays,
     getAdminData,
     updateAdmin,
     setAdminEntry,

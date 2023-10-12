@@ -4,7 +4,7 @@ CREATE TABLE days(
     );
 
 CREATE TABLE waiters(
-    waiterID INT PRIMARY KEY,
+    waiterID SERIAL PRIMARY KEY,
     name VARCHAR(255)
     );
 
@@ -15,3 +15,4 @@ CREATE TABLE admin(
     FOREIGN KEY(waiterID) REFERENCES waiters(waiterID)
     );
 
+-- waiterID INT PRIMARY KEY,
