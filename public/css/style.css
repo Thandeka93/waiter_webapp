@@ -45,6 +45,12 @@ body{
     .green-bg {
       background-color: green;
     }
+
+    .reset{
+      margin-top: 2em;
+      width: 7em;
+      height: 3em;
+    }
     
 
     /* @media screen and (min-width:700px){

@@ -179,16 +179,6 @@ async function waiters(req, res) {
         }
     }
 
-    // Define an asynchronous function 'updateSchedule' that handles updating the schedule.
-    async function updateSchedule(req, res) {
-
-    }
-
-    // Define an asynchronous function 'removeWaiter' that handles removing a waiter from the schedule.
-    async function removeWaiter(req, res) {
-
-    }
-
     // Define a function 'getError' that returns the current error message.
     function getError() {
         return error;
@@ -207,8 +197,6 @@ async function waiters(req, res) {
             clearSchedule,
             getError,
             postWaiters,
-            updateSchedule,
-            removeWaiter,
             getSuccess
 
         }

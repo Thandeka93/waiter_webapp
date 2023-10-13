@@ -53,52 +53,10 @@
 </div>
 </div>
 
-  <div id="update">
-  <h2> Update Schedule</h2>
-  <div id="deleteWaiter">
-  <h3 class="grey">Remove Waiter for a Chosen Day</h3>
-  <form action="/removeWaiter" method="post">
-    <select name="waiterDelete">
-{{#each names}}
-<option>{{this}}</option>
-{{/each}}
-</select>
-<select name="deleteDay">
-{{#each days}}
-<option> {{this.day}}</option>
-{{/each}}
-</select>
-  <button type="submit" id="remove">Remove Waiter</button>
-</form>
-</div>
-<h3 class="grey">Shift Waiter to Another Day</h3>
-  <form action="/update" method="post">
-  <span>Move Waiter:</span>
-  <select name="waiterName">
-{{#each names}}
-<option>{{this}}</option>
-{{/each}}
-</select>
-<span>From:</span>
-<select name="fromDay">
-{{#each days}}
-<option>{{this.day}}</option>
-{{/each}}
-</select>
-<span>To:</span>
-<select name="toDay">
-{{#each days}}
-<option> {{this.day}}</option>
-{{/each}}
-</select>
-  <button type="submit"  id="updateBtn">Update Roster</button>
-  </div>
-  </form>
   <form action="/clear" method="post">
-  <button type="submit" id="clear">Reset</button>
+  <button type="submit" id="clear" class="reset">Reset</button>
 </form>
 </div>
-
 
 <script>
 

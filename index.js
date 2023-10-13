@@ -42,8 +42,6 @@ app.all("/admin",routes.admin);
 app.get("/waiters/:username",routes.waiters);
 app.post("/waiters",routes.postWaiters);
 app.post("/clear", routes.clearSchedule);
-app.post("/update",routes.updateSchedule);
-app.post("/removeWaiter",routes.removeWaiter);
 
 const PORT= process.env.PORT||3004;
 
