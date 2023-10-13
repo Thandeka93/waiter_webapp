@@ -1,41 +1,61 @@
-import assert from "assert";
-import pgPromise from "pg-promise";
-import createDatabaseQueries from "../services/query.js";
+import 'dotenv/config';
+import assert from 'assert';
+import createDatabaseQueries from '../services/query.js'
+import pgPromise from 'pg-promise';
 
-describe('The basic database web app', function () {
+const connectionString =
+    process.env.PGDATABASE_URL ||
+    'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
 
-    let db;
+const pgp = pgPromise();
+const db = pgp(connectionString);
 
-    before(function () {
 
-        const connectionString =
-            process.env.PGDATABASE_URL ||
-            'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
+let query = createDatabaseQueries(db)
 
-        db = pgPromise()(connectionString);
+describe('Waiter availability', async function () {
+
+    beforeEach(async function () {
+        try {
+            await query.resetAdminTable();
+        } catch (err) {
+            console.log(err);
+        }
+    });
+
+    it('waiters in the database', async function () {
+
+        let waiters = await query.getAdminData();
+        assert.equal(0, waiters.length);
+    });
+
+    it('should retrieve days from the database', async () => {
+        const days = await query.getDays();
+        assert.strictEqual(Array.isArray(days), true);
+        assert.strictEqual(days.length, 7);
+
+        // checking the content of the days array
+        const expectedDays = [
+            { dayid: 1, day: 'Monday' },
+            { dayid: 2, day: 'Tuesday' },
+            { dayid: 3, day: 'Wednesday' },
+            { dayid: 4, day: 'Thursday' },
+            { dayid: 5, day: 'Friday' },
+            { dayid: 6, day: 'Saturday' },
+            { dayid: 7, day: 'Sunday' },
+        ];
+        assert.deepStrictEqual(days, expectedDays);
     });
 
     after(function () {
-        db.$pool.end();
+        db.$pool.end;
     });
 
-    // it('should test the insert waiter', async function () {
-    //     const queryUtility = createDatabaseQueries(db);
-    //     const waiterID = 1;
-    //     const waiterName = 'Thandeka';
-
-    //     // Insert a waiter into the database
-    //     await queryUtility.insertWaiter(waiterID, waiterName);
-
-    //     // Retrieve the inserted waiter from the database
-    //     const insertedWaiter = await queryUtility.getWaiterByName(waiterName);
-
-    //     // Assert that the retrieved waiter's name matches the expected value
-    //     assert.equal(insertedWaiter.name, waiterName);
-
-    // });
-
-
-
 });
+
+
+
+
+
+
 

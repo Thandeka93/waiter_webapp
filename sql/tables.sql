@@ -3,10 +3,15 @@ CREATE TABLE days(
     day VARCHAR(255)
     );
 
-CREATE TABLE waiters(
-    waiterID SERIAL PRIMARY KEY,
-    name VARCHAR(255)
-    );
+-- CREATE TABLE waiters(
+--     waiterID SERIAL PRIMARY KEY,
+--     name VARCHAR(255)
+--     );
+
+CREATE TABLE waiters (
+    waiterid SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
 
 CREATE TABLE admin(
     dayID INT,

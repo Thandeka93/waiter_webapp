@@ -14,6 +14,11 @@
 <input type="checkbox" value="6" id="Sat" name="day" {{#if daysChecked.[5]}}checked{{/if}} /><label for="Sat">Saturday</label><br>
 <input type="checkbox" value="7" id="Sun" name="day" {{#if daysChecked.[6]}}checked{{/if}} /><label for="Sun">Sunday</label><br>
 
+ {{!-- {{#each days}}
+                <input type="checkbox" value="{{this.dayid}}" id="{{this.day}}" name="day"
+                    {{#if daysChecked.[@index]}} checked {{/if}} /> <!-- Set 'checked' attribute conditionally -->
+                <label for="{{this.day}}">{{this.day}}</label><br>
+            {{/each}} --}}
 
 </div>
 
