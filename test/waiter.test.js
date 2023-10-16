@@ -47,6 +47,22 @@ describe('Waiter availability', async function () {
         assert.deepStrictEqual(days, expectedDays);
     });
 
+    it('should update the admin table by removing a waiter\'s assignments', async () => {
+        const waiterName = 'Thandeka'; 
+        const waiterID = await query.getWaiterIDByName(waiterName);
+    
+        // Add an assignment first
+        const dayID = 1; 
+        await query.setAdminEntry(dayID, waiterID);
+    
+        // Then, remove the assignment
+        await query.updateAdmin(waiterID);
+    
+        const assignedDays = await query.getWaiterDaysAssigned(waiterName);
+    
+        assert.strictEqual(assignedDays.includes(dayID), false);
+    });
+
     after(function () {
         db.$pool.end;
     });
