@@ -53,12 +53,12 @@ body{
     }
     
 
-    /* @media screen and (min-width:700px){
+    @media screen and (min-width:700px){
   	
       .container{
         width: 60%;
         border-radius: 5px;
-        border: 3px solid rgb(168, 116, 3);  
+        /* border: 3px solid rgb(168, 116, 3);   */
         margin:0 auto;
         margin-top:5%;
         padding-bottom: 30px;
@@ -67,4 +67,4 @@ body{
         
     }
   }
- */
+

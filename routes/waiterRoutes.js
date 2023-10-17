@@ -145,8 +145,8 @@ async function waiters(req, res) {
                 // Continue with the insertion and update logic.
                 if (days) {
                     // Check the number of selected days.
-                    if (days.length < 3 || days.length > 5) {
-                        error = "Select a min. of 3 and a max. of 5 days";
+                    if (days.length < 3 || days.length > 7) {
+                        error = "Please choose at least 3 days";
                         success = "";
                     } else {
                         error = "";
