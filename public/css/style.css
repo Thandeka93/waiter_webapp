@@ -46,6 +46,10 @@ body{
       background-color: green;
     }
 
+    .brown-bg{
+      background-color: #9c5d3d;
+    }
+
     .reset{
       margin-top: 2em;
       width: 7em;

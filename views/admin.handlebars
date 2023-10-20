@@ -69,8 +69,10 @@ document.addEventListener("DOMContentLoaded", function () {
       day.classList.add("red-bg");
     } else if (numberOfPeople === 2) {
       day.classList.add("orange-bg");
-    } else if (numberOfPeople >= 3) {
+    } else if (numberOfPeople === 3) {
       day.classList.add("green-bg");
+    } else if (numberOfPeople > 3){
+      day.classList.add("brown-bg");
     }
   });
 });

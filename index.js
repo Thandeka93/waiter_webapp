@@ -43,7 +43,7 @@ app.get("/waiters/:username",routes.waiters);
 app.post("/waiters",routes.postWaiters);
 app.post("/clear", routes.clearSchedule);
 
-const PORT= process.env.PORT||3004;
+const PORT= process.env.PORT||3003;
 
 app.listen(PORT,function(){
     console.log("App starting on port "+PORT);
