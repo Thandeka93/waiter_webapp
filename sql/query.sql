@@ -8,10 +8,10 @@ INSERT INTO weekdays (day) VALUES ('Sunday');
 
 
 
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
-INSERT INTO schedule (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);
+INSERT INTO admin_table (available) VALUES (false);

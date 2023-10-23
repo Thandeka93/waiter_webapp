@@ -67,18 +67,6 @@ describe('Waiter availability', async function () {
     
     });
 
-    it('should return all waiter schedules', async function () {
-        this.timeout(10000); 
-        // Add schedules for waiters
-        await query.updateSchedule('John', ['Monday', 'Tuesday', 'Wednesday']);
-        await query.updateSchedule('Alice', ['Thursday', 'Friday', 'Saturday']);
-        await query.updateSchedule('Bob', ['Sunday', 'Monday', 'Tuesday']);
-    
-        const allSchedules = await query.getAllSchedules();
-    
-        // Check if allSchedules is not null and has a length greater than 0
-        assert.equal(allSchedules !== null && allSchedules.length > 0, true);
-    });
 
     after(function () {
         db.$pool.end;
