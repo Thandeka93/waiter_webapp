@@ -1,52 +1,77 @@
+//import all dependencies
 import express from 'express';
+import exphbs from 'express-handlebars';
+import { engine } from 'express-handlebars'
 import bodyParser from 'body-parser';
-import { engine } from 'express-handlebars';
 import flash from 'express-flash';
-import session from 'express-session';
 import pgPromise from 'pg-promise';
-import dotenv from'dotenv';
-import createDatabaseQueries from './services/query.js';
-import appRoutes from './routes/waiterRoutes.js';
+import session from 'express-session';
+import waiterRoutes from './routes/waiterRoutes.js';
+import waiter from './services/query.js';
 
-dotenv.config();
 const app = express();
 
-app.use(express.static('public'));
-app.engine('handlebars', engine());
-app.set('view engine', 'handlebars');
-app.set('views', './views');
-app.use(express.static('public'));
-app.use(express.static('images'))
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(session({
-  secret: "secret-key",
-  resave: false,
-  saveInitialized: false
-}));
-app.use(flash());
-
+// Define the database connection string
 const connectionString =
   process.env.PGDATABASE_URL ||
   'postgres://ersfpvqe:bYZyNT95SJyVuqA45h3TYcLIJb6bWynP@dumbo.db.elephantsql.com/ersfpvqe';
 
+// Create a PostgreSQL database instance
 const pgp = pgPromise();
 const db = pgp(connectionString);
 
-const queries = createDatabaseQueries(db);
-const routes= appRoutes(queries);
+// Create an instance of the Express Handlebars
+const hbs = exphbs.create();
+const waiterdb = waiter(db);
 
-app.get("/",routes.index);
-app.all("/admin",routes.admin);
-app.get("/waiters/:username",routes.waiters);
-app.post("/waiters",routes.postWaiters);
-app.post("/clear", routes.clearSchedule);
+// Create routes using waiterRoutes
+const waiterRoute = waiterRoutes(waiterdb);
 
-const PORT= process.env.PORT||3003;
+// Add body-parser middleware for parsing JSON and URL-encoded data
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.listen(PORT,function(){
-    console.log("App starting on port "+PORT);
+// Configure the session middleware
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+// Add flash messages middleware
+app.use(flash());
+
+// Register a custom handlebars helper
+hbs.handlebars.registerHelper('includes', function(arr, item) {
+  // Map the array of objects to an array of days
+  const days = arr.map(a => a.day);
+  // Check if the item is included in the array of days
+  return days.includes(item);
 });
+
+// Set the Handlebars engine
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', './views');
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Define routes
+app.get('/', waiterRoute.displayIndexPage);
+app.get('/admin', waiterRoute.displayAllSchedules);
+app.post('/waiters/:username/update', waiterRoute.updateWaiterSchedule);
+app.get('/waiters/:username/update', waiterRoute.displayWaiterUpdatedSchedule);
+app.get('/waiters/:username', waiterRoute.displayWaiterSchedule);
+app.post('/reset', waiterRoute.resetData);
+
+// Set up the server to listen on a specified port
+const PORT = process.env.PORT || 3003;
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+});
+
+
+
 
 

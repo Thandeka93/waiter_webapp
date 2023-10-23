@@ -16,51 +16,68 @@ let query = createDatabaseQueries(db)
 describe('Waiter availability', async function () {
 
     beforeEach(async function () {
+        this.timeout(10000);
         try {
-            await query.resetAdminTable();
+            await query.reset();
         } catch (err) {
             console.log(err);
         }
     });
 
-    it('waiters in the database', async function () {
+    it('waiter name and avalability', async function () {
+        try{
+            var waiterName = 'Tee'
+        var dayOfTheWeek = ['Monday', 'Tuesday']
 
-        let waiters = await query.getAdminData();
-        assert.equal(0, waiters.length);
+        const insert = await query.updateSchedule(waiterName,dayOfTheWeek);
+
+        assert.deepEqual(insert, 'Tee'['Monday', 'Tuesday']);
+        }catch(error){
+            console.error(error.message)
+           }
+        
     });
 
-    it('should retrieve days from the database', async () => {
-        const days = await query.getDays();
-        assert.strictEqual(Array.isArray(days), true);
-        assert.strictEqual(days.length, 7);
+    it('error handling', async function(){
+        this.timeout(10000); 
+        try{
+            var waiterName = 'Ted';
+            var dayOfTheWeek = ['Monday'];
+        
+            await query.updateSchedule(waiterName,dayOfTheWeek);
+            
+        var schedule = await query.getWaiterSchedule(waiterName)
+        assert.deepEqual(schedule, []);
+        }catch(error){
+            assert.equal(error.message,'Please choose at least 3 days');
+        }
 
-        // checking the content of the days array
-        const expectedDays = [
-            { dayid: 1, day: 'Monday' },
-            { dayid: 2, day: 'Tuesday' },
-            { dayid: 3, day: 'Wednesday' },
-            { dayid: 4, day: 'Thursday' },
-            { dayid: 5, day: 'Friday' },
-            { dayid: 6, day: 'Saturday' },
-            { dayid: 7, day: 'Sunday' },
-        ];
-        assert.deepStrictEqual(days, expectedDays);
+        try{
+            var waiterName = 'Thabo';
+            var dayOfTheWeek = [''];
+        
+            await query.updateSchedule(waiterName,dayOfTheWeek);
+            
+        var schedule = await query.getWaiterSchedule(waiterName)
+        assert.deepEqual(schedule, []);
+        }catch(error){
+            assert.equal(error.message,'Please choose at least 3 days');
+        }
+
+    
     });
 
-    it('should update the admin table by removing a waiter\'s assignments', async () => {
-        const waiterName = 'Thandeka'; 
-        const waiterID = await query.getWaiterIDByName(waiterName);
+    it('should return all waiter schedules', async function () {
+        this.timeout(10000); 
+        // Add schedules for waiters
+        await query.updateSchedule('John', ['Monday', 'Tuesday', 'Wednesday']);
+        await query.updateSchedule('Alice', ['Thursday', 'Friday', 'Saturday']);
+        await query.updateSchedule('Bob', ['Sunday', 'Monday', 'Tuesday']);
     
-        // Add an assignment first
-        const dayID = 1; 
-        await query.setAdminEntry(dayID, waiterID);
+        const allSchedules = await query.getAllSchedules();
     
-        // Then, remove the assignment
-        await query.updateAdmin(waiterID);
-    
-        const assignedDays = await query.getWaiterDaysAssigned(waiterName);
-    
-        assert.strictEqual(assignedDays.includes(dayID), false);
+        // Check if allSchedules is not null and has a length greater than 0
+        assert.equal(allSchedules !== null && allSchedules.length > 0, true);
     });
 
     after(function () {

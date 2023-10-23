@@ -1,23 +1,26 @@
-CREATE TABLE days(
-    dayID INT PRIMARY KEY,
-    day VARCHAR(255)
-    );
-
--- CREATE TABLE waiters(
---     waiterID SERIAL PRIMARY KEY,
---     name VARCHAR(255)
---     );
-
 CREATE TABLE waiters (
-    waiterid SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
+    id SERIAL PRIMARY KEY, 
+    waiter_name VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE admin(
-    dayID INT,
-    waiterID INT, 
-    FOREIGN KEY(dayID) REFERENCES days(dayID), 
-    FOREIGN KEY(waiterID) REFERENCES waiters(waiterID)
-    );
+CREATE TABLE weekdays (
+    id SERIAL PRIMARY KEY,
+    day VARCHAR(255)
+);
 
--- waiterID INT PRIMARY KEY,
+CREATE TABLE admin_table (
+    id SERIAL PRIMARY KEY,
+    waiter_id INT,
+    day_id INT,
+    FOREIGN KEY (waiter_id) REFERENCES waiters(id),
+    FOREIGN KEY (day_id) REFERENCES weekdays(id)
+);
+
+
+
+
+
+
+
+
+

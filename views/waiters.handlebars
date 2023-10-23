@@ -1,40 +1,51 @@
-<div class="container waiters">
 <h1>NOLU'S COFFEE SHOP</h1>
-<h2>{{username}}'s Schedule</h2>
-<h4>Select days</h4>
-<p class="error">{{messages.error}}</p>
-<p class="success">{{messages.success}}</p>
-<form action="/waiters" method="post" id="waitersForm">
-<div class="checkbox">
-<input type="checkbox" value="1" id="Mon" name="day" {{#if daysChecked.[0]}}checked{{/if}} /><label for="Mon" id="red">Monday</label><br>
-<input type="checkbox" value="2" id="Tues" name="day" {{#if daysChecked.[1]}}checked{{/if}} /><label for="Tues">Tuesday</label><br>
-<input type="checkbox" value="3" id="Wed" name="day" {{#if daysChecked.[2]}}checked{{/if}} /><label for="Wed">Wednesday</label><br>
-<input type="checkbox" value="4" id="Thurs" name="day" {{#if daysChecked.[3]}}checked{{/if}} /><label for="Thurs">Thursday</label><br>
-<input type="checkbox" value="5" id="Fri" name="day" {{#if daysChecked.[4]}}checked{{/if}} /><label for="Fri">Friday</label><br>
-<input type="checkbox" value="6" id="Sat" name="day" {{#if daysChecked.[5]}}checked{{/if}} /><label for="Sat">Saturday</label><br>
-<input type="checkbox" value="7" id="Sun" name="day" {{#if daysChecked.[6]}}checked{{/if}} /><label for="Sun">Sunday</label><br>
-
- {{!-- {{#each days}}
-                <input type="checkbox" value="{{this.dayid}}" id="{{this.day}}" name="day"
-                    {{#if daysChecked.[@index]}} checked {{/if}} /> <!-- Set 'checked' attribute conditionally -->
-                <label for="{{this.day}}">{{this.day}}</label><br>
-            {{/each}} --}}
-
+<h2> {{username}}'s Schedule</h2>
+{{#if messages.error}}
+<div class="flash-error">
+    {{messages.error}}
 </div>
+{{/if}}
 
-<button type="submit"  id="update">Update</button>
+{{#if messages.success}}
+<div class="flash-success">
+    {{messages.success}}
+</div>
+{{/if}}
+
+
+<h2>Select days</h2>
+<form action="/waiters/{{username}}/update" method="post">
+    <input type="checkbox" id="Monday" name="days" value="Monday" {{#if (includes waiterSchedule 'Monday')}}checked{{/if}}>
+    <label for="Monday">Monday</label><br>
+    <input type="checkbox" id="Tuesday" name="days" value="Tuesday" {{#if (includes waiterSchedule 'Tuesday')}}checked{{/if}}>
+    <label for="Tuesday">Tuesday</label><br>
+    <input type="checkbox" id="Wednesday" name="days" value="Wednesday" {{#if (includes waiterSchedule 'Wednesday')}}checked{{/if}}>
+    <label for="Wednesday">Wednesday</label><br>
+    <input type="checkbox" id="Thursday" name="days" value="Thursday" {{#if (includes waiterSchedule 'Thursday')}}checked{{/if}}>
+    <label for="Thursday">Thursday</label><br>
+    <input type="checkbox" id="Friday" name="days" value="Friday" {{#if (includes waiterSchedule 'Friday')}}checked{{/if}}>
+    <label for="Friday">Friday</label><br>
+    <input type="checkbox" id="Saturday" name="days" value="Saturday" {{#if (includes waiterSchedule 'Saturday')}}checked{{/if}}>
+    <label for="Saturday">Saturday</label><br>
+    <input type="checkbox" id="Sunday" name="days" value="Sunday" {{#if (includes waiterSchedule 'Sunday')}}checked{{/if}}>
+    <label for="Sunday">Sunday</label><br>
+    <input type="submit" value="Update">
 </form>
-</div>
 <script>
-setTimeout(function(){
-    document.querySelector(".error").style.display="none";
-},3000);
+    // error messages display for 3.5seconds
+    let errorMessageElem = document.querySelector('.flash-error')
+  
+    setTimeout(()=>{
+      errorMessageElem.style.display = 'none'
 
-document.querySelector(".error").style.display="block";
+    },3500)
+//scuccess messages display for 3.5 seconds
+let successMessageElem = document.querySelector('.flash-success')
 
-setTimeout(function(){
-    document.querySelector(".success").style.display="none";
-},3000);
+    setTimeout(()=>{
+      successMessageElem.style.display = 'none'
 
-document.querySelector(".success").style.display="block";
-</script> 
+    }, 3500)
+
+
+  </script>
