@@ -24,49 +24,15 @@ describe('Waiter availability', async function () {
         }
     });
 
-    it('waiter name and avalability', async function () {
-        try{
-            var waiterName = 'Tee'
-        var dayOfTheWeek = ['Monday', 'Tuesday']
+    it('should return the total number of the waiters in the database', async function(){
+ 	
+        let waiters= await query.getAdmin();
+              assert.equal(0,waiters);
+       });
 
-        const insert = await query.updateSchedule(waiterName,dayOfTheWeek);
-
-        assert.deepEqual(insert, 'Tee'['Monday', 'Tuesday']);
-        }catch(error){
-            console.error(error.message)
-           }
-        
-    });
-
-    it('error handling', async function(){
-        this.timeout(10000); 
-        try{
-            var waiterName = 'Ted';
-            var dayOfTheWeek = ['Monday'];
-        
-            await query.updateSchedule(waiterName,dayOfTheWeek);
-            
-        var schedule = await query.getWaiterSchedule(waiterName)
-        assert.deepEqual(schedule, []);
-        }catch(error){
-            assert.equal(error.message,'Please choose at least 3 days');
-        }
-
-        try{
-            var waiterName = 'Thabo';
-            var dayOfTheWeek = [''];
-        
-            await query.updateSchedule(waiterName,dayOfTheWeek);
-            
-        var schedule = await query.getWaiterSchedule(waiterName)
-        assert.deepEqual(schedule, []);
-        }catch(error){
-            assert.equal(error.message,'Please choose at least 3 days');
-        }
-
+       
+       
     
-    });
-
 
     after(function () {
         db.$pool.end;

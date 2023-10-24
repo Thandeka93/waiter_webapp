@@ -1,60 +1,78 @@
-<div class="Heading">
-   <h1>NOLU'S COFFEE SHOP</h1> 
-   {{#if messages.error}}
-<div class="flash-error">
-    {{messages.error}}
-</div>
-{{/if}}
+<div class="container  admin">
+<h1>NOLU'S COFFEE SHOP</h1>
+<h2>Week Schedule</h2>
+<div class="grid">
+<div id="mon" class="schedule-day">
 
-{{#if messages.success}}
-<div class="flash-success">
-    {{messages.success}}
-</div>
-{{/if}}
-</div>
-<div class="key">
-     <h3>NB: The table won't display days with no waiters.</h3>
+<h3>Mon</h3>
+{{#each monday}}
+<p class="monP">{{this}}</p>
 
-    <ul class="adminUl">
-        <li><div class="green-key"></div> Green color - Sufficient waiters for the day</li>
-        <li><div class="orange-key"></div> Orange color - Less than 3 waiters for the day</li>
-        <li><div class="red-key"></div>  Red color - Over 3 waiters for the day</li>
-    </ul>
+{{/each}}
 </div>
-<div class="Onduty">
-    <div class="flash-success"></div>
-<div class="flash-error"></div>
-    <form action="/days" method="GET"></form>
-<table>
-  <thead>
-    <tr>
-      {{#each allSchedules}}
-        <th class="{{this.status}}">
-          {{@key}}
-        </th>
-      {{/each}}
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      {{#each allSchedules}}
-        <td>
-          {{#each this.waiters}}
-            {{this}}<br>
-          {{/each}}
-        </td>
-      {{/each}}
-    </tr>
+<div id="tues" class="schedule-day">
+<h3>Tues</h3>
+{{#each tuesday}}
+<p class="tueP">{{this}}</p>
 
-  </tbody>
-</table>
-    </form>
+{{/each}}
 </div>
-<form action="reset" method="POST">
-    {{!-- <input class="resetB" type="submit" value="reset"> --}}
-    <button type="submit" id="clear" class="reset">Reset</button>
+<div id="wed" class="schedule-day"><h3>Wed</h3>
+{{#each wednesday}}
+<p class="wedP">{{this}}</p>
+
+{{/each}}
+</div>
+<div id="thur" class="schedule-day"><h3>Thur</h3>
+{{#each thursday}}
+<p class="thurP">{{this}}</p>
+
+{{/each}}
+</div>
+<div id="fri" class="schedule-day"><h3>Fri</h3>
+{{#each friday}}
+<p class="friP">{{this}}</p>
+
+{{/each}}
+</div>
+<div id="sat"  class="schedule-day"><h3>Sat</h3>
+{{#each saturday}}
+<p class="satP">{{this}}</p>
+
+{{/each}}
+</div>
+<div id="sun" class="schedule-day"><h3>Sun</h3>
+{{#each sunday}}
+<p class="sunP">{{this}}</p>
+
+{{/each}}
+</div>
+</div>
+
+  
+  <form action="/clear" method="post">
+  <button type="submit" id="clear">Reset</button>
 </form>
+</div>
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const scheduleDays = document.querySelectorAll(".schedule-day");
+
+  scheduleDays.forEach(function (day) {
+    const numberOfPeople = day.querySelectorAll("p").length;
+    if (numberOfPeople === 1) {
+      day.classList.add("red-bg");
+    } else if (numberOfPeople === 2) {
+      day.classList.add("orange-bg");
+    } else if (numberOfPeople === 3) {
+      day.classList.add("green-bg");
+    } else if (numberOfPeople > 3){
+      day.classList.add("brown-bg");
+    }
+  });
+});
+
 // Reset button confirmation
 
 // Add an event listener to the reset button
@@ -70,9 +88,7 @@ clearButton.addEventListener("click", function (e) {
   }
 });
 
-
 </script>
-
 
 
 
