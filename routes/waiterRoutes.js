@@ -157,6 +157,7 @@ export default function appRoutes(queries) {
           }
         }
       }
+      
   
       // Set flash messages for error and success
       req.flash("error", getError());
