@@ -1,13 +1,13 @@
 body{ 
   text-align: center; 
-  background-image: url('https://img.freepik.com/premium-photo/cup-coffee-with-coffee-beans-table_902049-15449.jpg'); 
+  background-image: url('https://img.freepik.com/premium-photo/hot-black-coffee-white-marble-cup-paste-reflected-black-glass-floor_44271-56.jpg'); 
   background-size: cover; 
   background-repeat: no-repeat; 
-  padding: 2%;
-  margin: 2%;
+  padding: 1%;
+  margin: 1%;
   font-family:'Peralta';
   font-size: larger;
-  color: #dfddd9; 
+  color: #E5E4E2; 
   font-weight: bold;
 
 }
@@ -16,7 +16,7 @@ body{
 
 display:grid;
 grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-background-color: #AF6E4D; 
+background-color: #754832; 
 }
 
 .error{
@@ -69,7 +69,7 @@ height: 3em;
   background-color: green;
 }
 .black-bg{
-  background-color: black;
+  background-color: #696969;
 }
 
 }
@@ -81,15 +81,15 @@ height: 3em;
 }
 
 .color-list li {
-  display: flex;     /* Display list items as flex items */
+  display: flex;     
   align-items: center;
 }
 
 .color-sq {
   display: inline-block;
-  width: 20px;         /* Adjust the size as needed */
-  height: 20px;        /* Adjust the size as needed */
-  margin-right: 8px;  /* Adjust the spacing between the square and the text */
+  width: 20px;         
+  height: 20px;        
+  margin-right: 8px;  
 }
 
 /* .green {
