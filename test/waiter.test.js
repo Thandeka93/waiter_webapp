@@ -26,7 +26,7 @@ describe('Waiter availability', async function () {
 
     it('should return the total number of the waiters in the database', async function(){
  	
-        let waiters= await query.getAdmin();
+        let waiters= await query.getAdminSchedule();
               assert.equal(0,waiters);
        });
 

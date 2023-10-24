@@ -1,12 +1,12 @@
 body{ 
   text-align: center; 
-  background-image: url('https://i.pinimg.com/originals/09/52/e9/0952e9d8c44d9e1fcc1e9b6da06ca49c.jpg'); 
+  background-image: url('https://img.freepik.com/premium-photo/cup-coffee-with-coffee-beans-table_902049-15449.jpg'); 
   background-size: cover; 
   background-repeat: no-repeat; 
   padding: 2%;
   margin: 2%;
   font-family:'Peralta';
-  font-size: x-large;
+  font-size: larger;
   color: #dfddd9; 
   font-weight: bold;
 
@@ -68,11 +68,45 @@ height: 3em;
 .green-bg{
   background-color: green;
 }
-
-
-
+.black-bg{
+  background-color: black;
+}
 
 }
+
+.color-list {
+  list-style: none; /* Remove default list styles */
+  display: flex;     /* Display list items as a flex container */
+  gap: 20px;          /* Adjust the spacing between items */
+}
+
+.color-list li {
+  display: flex;     /* Display list items as flex items */
+  align-items: center;
+}
+
+.color-sq {
+  display: inline-block;
+  width: 20px;         /* Adjust the size as needed */
+  height: 20px;        /* Adjust the size as needed */
+  margin-right: 8px;  /* Adjust the spacing between the square and the text */
+}
+
+/* .green {
+  background-color: green;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+
+.black {
+  background-color: rgb(27, 27, 27);
+} */
 
 
 

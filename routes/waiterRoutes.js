@@ -39,7 +39,7 @@ export default function appRoutes(queries) {
       let names = [];
   
       // Retrieve schedule data from the database using 'queries.getAdmin()'
-      let schedule = await queries.getAdmin();
+      let schedule = await queries.getAdminSchedule();
   
       if (schedule) {
         // Loop through the schedule data
@@ -127,7 +127,7 @@ export default function appRoutes(queries) {
       // Check if the 'username' matches the provided regular expression
       if (regex.test(username)) {
         // Retrieve waiter days from the database using 'queries.getWaiterDays(username)'
-        waiterDays = await queries.getWaiterDays(username);
+        waiterDays = await queries.getWaiterDaysAssigned(username);
   
         // Loop through the waiter days and set corresponding boolean variables
         for (let i = 0; i < waiterDays.length; ++i) {
@@ -187,12 +187,12 @@ export default function appRoutes(queries) {
       // Check if the 'username' matches the regular expression
       if (regex.test(username)) {
         // Retrieve the 'waiterID' from the database using 'queries.getWaiterID(username)'
-        waiterID = await queries.getWaiterID(username);
+        waiterID = await queries.getWaiterIDByName(username);
   
         // If 'waiterID' is not found, create a new waiter and retrieve 'waiterID'
         if (waiterID == null || waiterID == undefined) {
-          await queries.recordWaiters(username);
-          waiterID = await queries.getWaiterID(username);
+          await queries.insertWaiterRecord(username);
+          waiterID = await queries.getWaiterIDByName(username);
         }
   
         // Check if at least 3 days are selected
@@ -206,12 +206,12 @@ export default function appRoutes(queries) {
             success = "Shift updated successfully";
   
             // Update the shift for the selected days using 'queries.update(waiterID)'
-            await queries.update(waiterID);
+            await queries.removeWaiterFromAdmin(waiterID);
   
             // Loop through the selected days and set the corresponding shift in the database
             for (let i = 0; i < days.length; ++i) {
               var day = Number(days[i]);
-              await queries.setAdmin(day, waiterID);
+              await queries.assignWaiterToDay(day, waiterID);
             }
           }
         }
@@ -228,7 +228,7 @@ export default function appRoutes(queries) {
     async function clearSchedule(req, res) {
       try {
         // Reset the schedule in the database using 'queries.reset()'
-        await queries.reset();
+        await queries.clearAdminSchedule();
         // Redirect to the 'admin' page
         res.redirect("/admin");
       } catch (err) {

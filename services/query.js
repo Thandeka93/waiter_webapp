@@ -1,8 +1,136 @@
-// Define a function 'queries' that takes a 'db' object as a parameter
+// // Define a function 'queries' that takes a 'db' object as a parameter
+// export default function createDatabaseQueries(db) {
+
+//   // Define an async function 'recordDays' to insert a new day record in the database
+//   async function recordDays(id, day) {
+//     try {
+//       await db.none(`INSERT INTO days(dayID, day) VALUES ($1, $2)`, [id, day]);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'recordWaiters' to insert a new waiter record in the database
+//   async function recordWaiters(waiter) {
+//     try {
+//       await db.none(`INSERT INTO waiters(name) VALUES ($1)`, waiter);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'getAdmin' to retrieve admin schedule data from the database
+//   async function getAdmin() {
+//     try {
+//       let result = await db.manyOrNone(
+//         `SELECT waiters.name, days.day FROM admin
+//          JOIN days ON admin.dayID = days.dayID
+//          JOIN waiters ON admin.waiterID = waiters.waiterID`
+//       );
+//       return result;
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'reset' to clear the admin schedule by deleting all records
+//   async function reset() {
+//     try {
+//       await db.none(`DELETE FROM admin`);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'setAdmin' to assign a waiter to a specific day in the admin schedule
+//   async function setAdmin(dayID, waiterID) {
+//     try {
+//       await db.none("INSERT INTO admin(dayID, waiterID) VALUES ($1, $2)", [dayID, waiterID]);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'update' to remove a waiter from the admin schedule
+//   async function update(waiterID) {
+//     try {
+//       await db.none("DELETE FROM admin WHERE waiterID = $1", waiterID);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'getWaiter' to retrieve a waiter by name
+//   async function getWaiter(waiter) {
+//     try {
+//       let result = await db.oneOrNone("SELECT name FROM waiters WHERE name = $1", waiter);
+//       return result;
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Define an async function 'getWaiterDays' to retrieve the days a waiter is assigned to
+//   async function getWaiterDays(name) {
+//     if (name) {
+//       try {
+//         let result = await db.manyOrNone(
+//           "SELECT dayID FROM admin JOIN waiters ON admin.waiterID = waiters.waiterID WHERE name = $1",
+//           name
+//         );
+//         return result;
+//       } catch (err) {
+//         console.log(err);
+//       }
+//     }
+//   }
+
+//   // Define an async function 'getWaiterID' to retrieve a waiter's ID by name
+//   async function getWaiterID(name) {
+//     try {
+//       const result = await db.one("SELECT waiterID FROM waiters WHERE name = $1", name);
+//       return result.waiterid; // Make sure to use the correct property name
+//     } catch (err) {
+//       if (err.name === 'QueryResultError' && err.code === 0) {
+//         // Handle the case when no result is found (QueryResultError with code 0)
+//         return null; // or some other appropriate value
+//       } else {
+//         console.log(err);
+//         throw err; // Rethrow other errors for debugging purposes
+//       }
+//     }
+//   }
+
+//   // Define an async function 'getDays' to retrieve the days assigned to a waiter
+//   async function getDays(waiterID) {
+//     try {
+//       let result = await db.manyOrNone("SELECT dayID FROM admin WHERE waiterID = $1", waiterID);
+//       return result;
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   // Return an object with the defined functions as properties
+//   return {
+//     reset,
+//     recordDays,
+//     recordWaiters,
+//     getAdmin,
+//     update,
+//     setAdmin,
+//     getWaiter,
+//     getWaiterID,
+//     getDays,
+//     getWaiterDays,
+//   };
+// }
+
+// Define a function 'createDatabaseQueries' that takes a 'db' object as a parameter
 export default function createDatabaseQueries(db) {
 
-  // Define an async function 'recordDays' to insert a new day record in the database
-  async function recordDays(id, day) {
+  // Define an async function 'insertDayRecord' to insert a new day record in the database
+  async function insertDayRecord(id, day) {
     try {
       await db.none(`INSERT INTO days(dayID, day) VALUES ($1, $2)`, [id, day]);
     } catch (err) {
@@ -10,8 +138,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'recordWaiters' to insert a new waiter record in the database
-  async function recordWaiters(waiter) {
+  // Define an async function 'insertWaiterRecord' to insert a new waiter record in the database
+  async function insertWaiterRecord(waiter) {
     try {
       await db.none(`INSERT INTO waiters(name) VALUES ($1)`, waiter);
     } catch (err) {
@@ -19,8 +147,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'getAdmin' to retrieve admin schedule data from the database
-  async function getAdmin() {
+  // Define an async function 'getAdminSchedule' to retrieve admin schedule data from the database
+  async function getAdminSchedule() {
     try {
       let result = await db.manyOrNone(
         `SELECT waiters.name, days.day FROM admin
@@ -33,8 +161,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'reset' to clear the admin schedule by deleting all records
-  async function reset() {
+  // Define an async function 'clearAdminSchedule' to clear the admin schedule by deleting all records
+  async function clearAdminSchedule() {
     try {
       await db.none(`DELETE FROM admin`);
     } catch (err) {
@@ -42,8 +170,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'setAdmin' to assign a waiter to a specific day in the admin schedule
-  async function setAdmin(dayID, waiterID) {
+  // Define an async function 'assignWaiterToDay' to assign a waiter to a specific day in the admin schedule
+  async function assignWaiterToDay(dayID, waiterID) {
     try {
       await db.none("INSERT INTO admin(dayID, waiterID) VALUES ($1, $2)", [dayID, waiterID]);
     } catch (err) {
@@ -51,8 +179,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'update' to remove a waiter from the admin schedule
-  async function update(waiterID) {
+  // Define an async function 'removeWaiterFromAdmin' to remove a waiter from the admin schedule
+  async function removeWaiterFromAdmin(waiterID) {
     try {
       await db.none("DELETE FROM admin WHERE waiterID = $1", waiterID);
     } catch (err) {
@@ -60,8 +188,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'getWaiter' to retrieve a waiter by name
-  async function getWaiter(waiter) {
+  // Define an async function 'getWaiterByName' to retrieve a waiter by name
+  async function getWaiterByName(waiter) {
     try {
       let result = await db.oneOrNone("SELECT name FROM waiters WHERE name = $1", waiter);
       return result;
@@ -70,8 +198,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'getWaiterDays' to retrieve the days a waiter is assigned to
-  async function getWaiterDays(name) {
+  // Define an async function 'getWaiterDaysAssigned' to retrieve the days a waiter is assigned to
+  async function getWaiterDaysAssigned(name) {
     if (name) {
       try {
         let result = await db.manyOrNone(
@@ -85,8 +213,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'getWaiterID' to retrieve a waiter's ID by name
-  async function getWaiterID(name) {
+  // Define an async function 'getWaiterIDByName' to retrieve a waiter's ID by name
+  async function getWaiterIDByName(name) {
     try {
       const result = await db.one("SELECT waiterID FROM waiters WHERE name = $1", name);
       return result.waiterid; // Make sure to use the correct property name
@@ -101,8 +229,8 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Define an async function 'getDays' to retrieve the days assigned to a waiter
-  async function getDays(waiterID) {
+  // Define an async function 'getDaysAssignedToWaiter' to retrieve the days assigned to a waiter
+  async function getDaysAssignedToWaiter(waiterID) {
     try {
       let result = await db.manyOrNone("SELECT dayID FROM admin WHERE waiterID = $1", waiterID);
       return result;
@@ -113,18 +241,19 @@ export default function createDatabaseQueries(db) {
 
   // Return an object with the defined functions as properties
   return {
-    reset,
-    recordDays,
-    recordWaiters,
-    getAdmin,
-    update,
-    setAdmin,
-    getWaiter,
-    getWaiterID,
-    getDays,
-    getWaiterDays,
+    clearAdminSchedule,
+    insertDayRecord,
+    insertWaiterRecord,
+    getAdminSchedule,
+    removeWaiterFromAdmin,
+    assignWaiterToDay,
+    getWaiterByName,
+    getWaiterIDByName,
+    getDaysAssignedToWaiter,
+    getWaiterDaysAssigned,
   };
 }
+
 
 
 

@@ -1,6 +1,24 @@
 <div class="container  admin">
 <h1>NOLU'S COFFEE SHOP</h1>
 <h2>Week Schedule</h2>
+
+<ul class="color-list">
+  <h4>Color legend:</h4>
+  <li>
+    <span class="color-sq red"></span> Red: 1 waiter within a single day
+  </li>
+  <li>
+    <span class="color-sq orange"></span> Orange: 2 waiters within a single day
+  </li>
+  <li>
+    <span class="color-sq green"></span> Green: 3 waiters within a single day
+  </li>
+  <li>
+    <span class="color-sq black"></span> Black: More than 3 waiters within a single day
+  </li>
+</ul>
+
+
 <div class="grid">
 <div id="mon" class="schedule-day">
 
@@ -68,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (numberOfPeople === 3) {
       day.classList.add("green-bg");
     } else if (numberOfPeople > 3){
-      day.classList.add("brown-bg");
+      day.classList.add("black-bg");
     }
   });
 });
