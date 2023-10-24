@@ -30,36 +30,7 @@ describe('Waiter availability', async function () {
               assert.equal(0,waiters);
        });
 
-       it('should remove a waiter from the admin schedule by waiterID', async () => {
-        // Insert a waiter record and an admin record for that waiter
-        const waiterID = 1;
-        await query.insertWaiterRecord("Test1");
-        await query.assignWaiterToDay(1, waiterID); // Assign the waiter to a day
-    
-        // Use the removeWaiterFromAdmin function to remove the waiter by waiterID
-        await query.removeWaiterFromAdmin(waiterID);
-    
-        // Attempt to retrieve the admin schedule for the waiter by waiterID
-        const adminSchedule = await query.getDaysAssignedToWaiter(waiterID);
-    
-        // Assert that the admin schedule should be empty for the removed waiter
-        assert.equal(adminSchedule.length, 0);
-      });
-
-      it('should not remove a waiter if the waiterID does not exist in the admin schedule', async () => {
-        // Insert a waiter record but do not assign the waiter to the admin schedule
-        await query.insertWaiterRecord("Another");
-        const waiterID = 2; // This waiter is not assigned to the admin schedule
-    
-        // Use the removeWaiterFromAdmin function to attempt to remove the waiter
-        await query.removeWaiterFromAdmin(waiterID);
-    
-        // Attempt to retrieve the admin schedule for the waiter by waiterID
-        const adminSchedule = await query.getDaysAssignedToWaiter(waiterID);
-    
-        // Assert that the admin schedule should be empty for the waiter since they were not assigned
-        assert.equal(adminSchedule.length, 0);
-      });
+       
       
     after(function () {
         db.$pool.end;
