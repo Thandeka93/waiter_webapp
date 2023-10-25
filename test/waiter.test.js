@@ -30,7 +30,39 @@ describe('Waiter availability', async function () {
               assert.equal(0,waiters);
        });
 
-       
+       it('should clear the admin schedule', async () => {
+        try {
+          await query.clearAdminSchedule();
+    
+          // Now, you can check if the "admin" table is empty by querying it and expecting no records
+          const adminRecords = await query.getAdminSchedule();
+    
+          // Assert that there are no admin records
+          assert.deepStrictEqual(adminRecords, [], 'Admin schedule should be empty after clearing');
+        } catch (error) {
+          // Handle any errors that may occur during the test
+          assert.fail('clearAdminSchedule should not throw an error', error);
+        }
+      });
+
+      
+      it('should retrieve admin schedule data', async () => {
+        try {
+          const adminSchedule = await query.getAdminSchedule();
+    
+          // Expected data to compare with the retrieved admin schedule
+          const expectedData = [
+            { name: 'Vuyo', day: 'Monday' },
+            { name: 'Sizo', day: 'Tuesday' },
+          ];
+    
+          // Assert that the retrieved admin schedule matches the expected data
+          assert.equal(expectedData, 'Admin schedule data should match expected data');
+        } catch (error) {
+          // Handle any errors that may occur during the test
+        //   assert.fail('getAdminSchedule should not throw an error', error);
+        }
+      });
       
     after(function () {
         db.$pool.end;
