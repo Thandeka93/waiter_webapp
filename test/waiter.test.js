@@ -63,6 +63,26 @@ describe('Waiter availability', async function () {
         //   assert.fail('getAdminSchedule should not throw an error', error);
         }
       });
+
+      it('should add a waiter to the admin schedule', async function () {
+        try {
+          // Insert a new waiter to the admin schedule
+          const waiterID = 1; 
+          const dayID = 1;   
+          await query.assignWaiterToDay(dayID, waiterID);
+      
+          // Retrieve the admin schedule to check if the waiter was added
+          const adminSchedule = await query.getAdminSchedule();
+      
+          // Check if the added waiter is in the admin schedule
+          const addedWaiter = adminSchedule.find(record => record.waiterID === waiterID && record.dayID === dayID);
+          assert.equal(addedWaiter, undefined);
+        } catch (error) {
+          // Handle any errors that may occur during the test
+          assert.fail('assignWaiterToDay should not throw an error', error);
+        }
+      });
+      
       
     after(function () {
         db.$pool.end;

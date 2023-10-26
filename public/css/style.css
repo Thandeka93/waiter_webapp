@@ -3,20 +3,65 @@ body{
   background-image: url('https://img.freepik.com/premium-photo/hot-black-coffee-white-marble-cup-paste-reflected-black-glass-floor_44271-56.jpg'); 
   background-size: cover; 
   background-repeat: no-repeat; 
-  padding: 1%;
-  margin: 1%;
-  font-family:'Peralta';
-  font-size: larger;
-  color: #E5E4E2; 
-  font-weight: bold;
+  padding: 2%;
+  margin: 2%;
+  font-family:'Peralta'; 
+  font-size: medium;
+  color: #ebebe8; 
 
 }
 
-.grid{
+button{
+  width: 120px; 
+  border: none;
+  padding:18px;
+  width: 80%;
+  margin-left:60px; 
+}
 
+#deleteWaiter select{
+margin-bottom:10px;
+padding: 1px;
+}
+
+#deleteWaiter{
+margin-bottom:12px;
+border-bottom: 1px solid #9F8170  ;
+}
+
+#remove{
+width: 90px;
+padding: 3px;
+font-family:'Peralta';
+}
+
+.checkbox{
+text-align:left;
+margin-left: 30%;
+margin-bottom: 30px;
+}
+
+.grid{
 display:grid;
 grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-background-color: #754832; 
+gap: 2em;
+background-color: #9F8170;
+}
+
+.waiters button{
+margin-left:5px;
+margin-top: 80px;
+}
+
+.admin button {
+margin-left:5px;
+margin-top: 10px;
+}
+
+#clear{
+  width: 105px;
+  height: 40px;
+  font-size: large;
 }
 
 .error{
@@ -27,23 +72,16 @@ font-size: 1.1em;
 .success{
 color: green;
 font-size: 1.1em;
-
 }
-
-
 
 #update{
 margin-top: 50px;
-width: 7em;
-height: 3em;
 }
 
-#clear{
-  margin-top: 30px; 
-  width: 7em;
-height: 3em;
+#updateBtn{
+margin-top:50px;
+margin-bottom:15px;
 }
-
 
 @media screen and (min-width:700px){
   
@@ -56,6 +94,25 @@ height: 3em;
   padding-left: 30px;
   padding-right: 30px;
   
+}
+
+#remove{
+font-size: 1.1em;
+}
+
+button{
+margin-left: 120px;
+font-size: 1.5em;
+}
+
+.waiters button{
+width: 100px;
+  height: 40px;
+  font-size: large;
+}
+
+table{
+  margin-bottom: 30px
 }
 
 .orange-bg{
@@ -75,9 +132,9 @@ height: 3em;
 }
 
 .color-list {
-  list-style: none; /* Remove default list styles */
-  display: flex;     /* Display list items as a flex container */
-  gap: 20px;          /* Adjust the spacing between items */
+  list-style: none; 
+  display: flex;     
+  gap: 20px;         
 }
 
 .color-list li {
@@ -92,21 +149,7 @@ height: 3em;
   margin-right: 8px;  
 }
 
-/* .green {
-  background-color: green;
-}
 
-.orange {
-  background-color: orange;
-}
-
-.red {
-  background-color: red;
-}
-
-.black {
-  background-color: rgb(27, 27, 27);
-} */
 
 
 

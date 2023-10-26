@@ -67,6 +67,26 @@
 </div>
 </div>
 
+ <div id="update">
+  <h2>Remove Waiter</h2>
+  <div id="deleteWaiter">
+  <form action="/removeWaiter" method="post">
+  <label for="waiterDelete">Select Waiter:</label>
+    <select name="waiterDelete">
+{{#each names}}
+<option>{{this}}</option>
+{{/each}}
+</select>
+<label for="deleteDay">Select Day:</label>
+<select name="deleteDay">
+{{#each days}}
+<option> {{this.day}}</option>
+{{/each}}
+</select>
+  <button type="submit" id="remove">Remove</button>
+</form>
+</div>
+
   
   <form action="/clear" method="post">
   <button type="submit" id="clear">Reset</button>

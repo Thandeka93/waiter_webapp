@@ -36,11 +36,12 @@ const db = pgp(connectionString);
 const queries = createDatabaseQueries(db);
 const routes= appRoutes(queries);
 
-app.get("/",routes.index);
-app.all("/admin",routes.admin);
-app.get("/waiters/:username",routes.waiters);
-app.post("/waiters",routes.postWaiters);
+app.get("/",routes.renderIndex);
+app.all("/admin",routes.renderAdmin);
+app.get("/waiters/:username",routes.renderWaiters);
+app.post("/waiters",routes.handlePostWaiters);
 app.post("/clear", routes.clearSchedule);
+app.post("/removeWaiter",routes.removeWaiter);
 
 const PORT= process.env.PORT||3006;
 app.listen(PORT,function(){

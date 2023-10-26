@@ -60,6 +60,7 @@ export default function createDatabaseQueries(db) {
     }
   }
 
+
   // Define an async function 'getWaiterByName' to retrieve a waiter by name
   async function getWaiterByName(waiter) {
     try {
@@ -111,6 +112,14 @@ export default function createDatabaseQueries(db) {
     }
   }
 
+  async function deleteWaiter(waiterID, dayID) {
+    try {
+      await db.none("DELETE FROM admin WHERE waiterID=$1 AND dayID=$2", [waiterID, dayID]);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   // Return an object with the defined functions as properties
   return {
     clearAdminSchedule,
@@ -123,6 +132,7 @@ export default function createDatabaseQueries(db) {
     getWaiterIDByName,
     getDaysAssignedToWaiter,
     getWaiterDaysAssigned,
+    deleteWaiter
   };
 }
 
