@@ -38,7 +38,8 @@ font-family:'Peralta';
 .checkbox{
 text-align:left;
 margin-left: 30%;
-margin-bottom: 30px;
+/* margin-bottom: 30px; */
+gap: 0;
 }
 
 .grid{
