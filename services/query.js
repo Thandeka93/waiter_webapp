@@ -120,6 +120,21 @@ export default function createDatabaseQueries(db) {
     }
   }
 
+  async function getDays(){
+    return await db.manyOrNone("SELECT day FROM days");
+  }
+
+   // Define an async function 'getDaysOfWeek' to retrieve the days of the week from the database
+   async function getDaysOfWeek() {
+    try {
+      const days = await db.manyOrNone("SELECT day, dayID FROM days");
+      return days;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  }
+
   // Return an object with the defined functions as properties
   return {
     clearAdminSchedule,
@@ -132,7 +147,9 @@ export default function createDatabaseQueries(db) {
     getWaiterIDByName,
     getDaysAssignedToWaiter,
     getWaiterDaysAssigned,
-    deleteWaiter
+    deleteWaiter,
+    getDays,
+    getDaysOfWeek
   };
 }
 

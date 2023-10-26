@@ -1,4 +1,5 @@
 // Define a function 'routes' that takes 'queries' as a parameter
+import createScheduleProcessor from '../scheduleProcessor.js';
 export default function appRoutes(queries) {
 
   // Initialize variables for error, success, and username
@@ -25,9 +26,14 @@ export default function appRoutes(queries) {
     res.render("index", {});
   }
 
-  // Define an async function 'admin' to handle rendering the admin page
-  async function renderAdmin(req, res,) {
-    // Initialize arrays for each day of the week
+async function renderAdmin(req, res) {
+  // Initialize arrays for each day of the week
+  let daysData = await queries.getDaysOfWeek();
+
+  // Check if the 'daysData' array contains data for all 7 days of the week.
+  // If data for all 7 days is available in the database:
+  // Initialize empty arrays for each day of the week to store data.
+  if (daysData.length === 7) {
     let monday = [];
     let tuesday = [];
     let wednesday = [];
@@ -35,62 +41,42 @@ export default function appRoutes(queries) {
     let friday = [];
     let saturday = [];
     let sunday = [];
-    // Initialize an array for storing names
-    let names = [];
 
-    // Retrieve schedule data from the database using 'queries.getAdmin()'
+    // Retrieve schedule data from the database using 'queries.getAdminSchedule()'
     let schedule = await queries.getAdminSchedule();
 
     if (schedule) {
-      // Loop through the schedule data
-      for (let i = 0; i < schedule.length; ++i) {
-        var entry = schedule[i];
+      // Use the createScheduleProcessor function to process the schedule data
+      let scheduleProcessor = createScheduleProcessor(schedule);
+      let processedNames = scheduleProcessor.getNames();
+      let processedDaysData = scheduleProcessor.getDaysData();
 
-        // Check if the name is not already in the 'names' array and add it
-        if (!names.includes(entry.name)) {
-          names.push(entry.name);
-        }
-
-        // Categorize names based on the day of the week
-        switch (entry.day) {
-          case "Monday":
-            monday.push(entry.name);
-            break;
-          case "Tuesday":
-            tuesday.push(entry.name);
-            break;
-          case "Wednesday":
-            wednesday.push(entry.name);
-            break;
-          case "Thursday":
-            thursday.push(entry.name);
-            break;
-          case "Friday":
-            friday.push(entry.name);
-            break;
-          case "Saturday":
-            saturday.push(entry.name);
-            break;
-          case "Sunday":
-            sunday.push(entry.name);
-            break;
-        }
-      }
+      // Render the 'admin' page with the collected data
+      res.render("admin", {
+        ...processedDaysData,
+        days: daysData, // Pass the retrieved days of the week
+        names: processedNames
+      });
+    } else {
+      // Handle the case where there is no schedule data
+      res.render("admin", {
+        monday,
+        tuesday,
+        wednesday,
+        thursday,
+        friday,
+        saturday,
+        sunday,
+        days: daysData, // Pass the retrieved days of the week
+        names: []
+      });
     }
-
-    // Render the 'admin' page with the collected data
-    res.render("admin", {
-      monday,
-      tuesday,
-      wednesday,
-      thursday,
-      friday,
-      saturday,
-      sunday,
-      days,
-      names
-    });
   }
+  else {
+    // Handle the case where days of the week data is not retrieved properly
+    res.status(500).send("Error: Days of the week data not available.");
+  }
+}
 
   // Define an async function 'waiters' to handle rendering the waiters page
   async function renderWaiters(req, res) {
@@ -158,10 +144,11 @@ export default function appRoutes(queries) {
       }
     }
 
-
     // Set flash messages for error and success
     req.flash("error", getError());
     req.flash("success", getSuccess());
+
+    const displayDays = await queries.getDaysOfWeek();
 
     // Render the 'waiters' page with the collected data
     res.render("waiters", {
@@ -172,7 +159,8 @@ export default function appRoutes(queries) {
       friChecked,
       satChecked,
       sunChecked,
-      username
+      username,
+      displayDays
     });
 
     // Clear the 'success' variable
@@ -181,6 +169,7 @@ export default function appRoutes(queries) {
 
   // Define an async function 'postWaiters' to handle POST requests for the waiters page
   async function handlePostWaiters(req, res) {
+    
     // Retrieve selected days and initialize 'waiterID'
     let days = req.body.day;
     let waiterID = 0;
@@ -229,7 +218,7 @@ export default function appRoutes(queries) {
       }
     } else {
       // Set an error message if the 'username' does not match the regular expression
-      error = "Not updated. Name should only contain letters.";
+      error = "Outdated, name must only contain letters";
     }
 
     // Redirect to the waiters page for the specified 'username'

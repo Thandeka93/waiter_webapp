@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import assert from 'assert';
-import createDatabaseQueries from '../services/query.js'
+import createDatabaseQueries from '../services/query.js';
+import createScheduleProcessor from '../scheduleProcessor.js';
 import pgPromise from 'pg-promise';
 
 const connectionString =
@@ -82,7 +83,47 @@ describe('Waiter availability', async function () {
           assert.fail('assignWaiterToDay should not throw an error', error);
         }
       });
+
+      it('should remove a waiter from the admin schedule', async function () {
+        const waiterID = 1;
+        
+        const initialDaysAssigned = await query.getDaysAssignedToWaiter(waiterID); // Get the initial list of days assigned
+        
+        await query.removeWaiterFromAdmin(waiterID);
+        
+        const finalDaysAssigned = await query.getDaysAssignedToWaiter(waiterID); // Get the list of days assigned after removal
+        
+        // Assert that the waiter is removed by comparing the lengths of the initial and final lists
+        assert.equal(finalDaysAssigned.length, 0, 'Waiter should be removed from admin schedule');
+      });
       
+
+      it('should get the days of the week', async function () {
+        const daysOfWeek = await query.getDaysOfWeek();
+        
+        assert.equal(daysOfWeek.length, 7, 'There should be 7 days in a week');
+      });
+
+        const sampleSchedule = [
+          { name: 'Alice', day: 'Monday' },
+          { name: 'Bob', day: 'Tuesday' },
+          { name: 'Charlie', day: 'Monday' },
+          { name: 'Dave', day: 'Wednesday' },
+          { name: 'Eve', day: 'Tuesday' },
+          
+        ];
+      
+        it('should categorize names and days correctly', function () {
+          const scheduleProcessor = createScheduleProcessor(sampleSchedule);
+      
+          const names = scheduleProcessor.getNames();
+          const daysData = scheduleProcessor.getDaysData();
+      
+          assert.deepEqual(names, ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve'], 'Names should be categorized correctly');
+          assert.deepEqual(daysData.monday, ['Alice', 'Charlie'], 'Monday entries should be categorized correctly');
+          assert.deepEqual(daysData.tuesday, ['Bob', 'Eve'], 'Tuesday entries should be categorized correctly');
+          assert.deepEqual(daysData.wednesday, ['Dave'], 'Wednesday entries should be categorized correctly');
+        });
       
     after(function () {
         db.$pool.end;
