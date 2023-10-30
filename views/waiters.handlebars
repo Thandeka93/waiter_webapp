@@ -7,7 +7,11 @@
 <form action="/waiters" method="post" id="waitersForm">
 {{#each displayDays}}
 <div class="checkbox">
-<input type ="checkbox" value={{this.dayid}}  name="day" /><label id="red">{{this.day}}</label><br>
+  <input type="checkbox" value={{this.dayid}} id={{this.day}} name="day" {{#if this.checked}}checked{{/if}} />
+      <label for={{this.day}} id="red">{{this.day}}</label><br>
+    
+  {{!-- <input type="checkbox" value={{this.dayid}} name="day" {{#if this.checked}}checked{{/if}} /><label id="red">{{this.day}}</label><br> --}}
+{{!-- <input type ="checkbox" value={{this.dayid}} id="Mon" name="day" /><label for="Mon" id="red">{{this.day}}</label><br> --}}
 
 {{!-- <input type ="checkbox" value="2" id="Tues"  name="day" /><label for="Tues">Tuesday</label><br>
 <input type ="checkbox" value="3" id="Wed" name="day"  /><label for="Wed">Wednesday</label><br>
@@ -20,7 +24,9 @@
 <button type="submit"  id="update">Update</button>
 </form>
 </div>
+
 <script>
+
 setTimeout(function(){document.querySelector(".error").style.display="none";
 },3000);
 
