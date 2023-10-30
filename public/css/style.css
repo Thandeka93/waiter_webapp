@@ -45,8 +45,8 @@ gap: 0;
 .grid{
 display:grid;
 grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-gap: 2em;
-background-color: #9F8170;
+gap: 1em;
+background-color: #D2B48C;
 }
 
 .waiters button{
