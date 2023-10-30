@@ -7,10 +7,9 @@
 <form action="/waiters" method="post" id="waitersForm">
 {{#each displayDays}}
 <div class="checkbox">
-  <input type="checkbox" value={{this.dayid}} id={{this.day}} name="day" {{#if this.checked}}checked{{/if}} />
-      <label for={{this.day}} id="red">{{this.day}}</label><br>
-    
-  {{!-- <input type="checkbox" value={{this.dayid}} name="day" {{#if this.checked}}checked{{/if}} /><label id="red">{{this.day}}</label><br> --}}
+
+  <input type="checkbox" value="{{this.dayid}}" id="{{this.day}}" name="day" />
+      <label for="{{this.day}}" id="red">{{this.day}}</label><br>
 {{!-- <input type ="checkbox" value={{this.dayid}} id="Mon" name="day" /><label for="Mon" id="red">{{this.day}}</label><br> --}}
 
 {{!-- <input type ="checkbox" value="2" id="Tues"  name="day" /><label for="Tues">Tuesday</label><br>
@@ -24,18 +23,36 @@
 <button type="submit"  id="update">Update</button>
 </form>
 </div>
-
 <script>
+// Wait for the DOM to load
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
-setTimeout(function(){document.querySelector(".error").style.display="none";
-},3000);
+    // Add event listeners to handle their state
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        if (this.checked) {
+          this.classList.add("checked");
+        } else {
+          this.classList.remove("checked");
+        }
+      });
+    });
 
-document.querySelector(".error").style.display="block";
+    // Handle hiding error and success messages
+    setTimeout(function () {
+      document.querySelector(".error").style.display = "none";
+    }, 3000);
 
-setTimeout(function(){document.querySelector(".success").style.display="none";
-},3000);
+    document.querySelector(".error").style.display = "block";
 
-document.querySelector(".success").style.display="block";
+    setTimeout(function () {
+      document.querySelector(".success").style.display = "none";
+    }, 3000);
+
+    document.querySelector(".success").style.display = "block";
+  });
 </script>
 
 

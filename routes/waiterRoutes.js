@@ -1,4 +1,5 @@
 // Define a function 'routes' that takes 'queries' as a parameter
+import { days } from '../days.js';
 import createScheduleProcessor from '../scheduleProcessor.js';
 export default function appRoutes(queries) {
 
@@ -9,17 +10,6 @@ export default function appRoutes(queries) {
 
   // Define a regular expression for matching names with at least 3 letters
   let regex = /^([a-zA-Z]{3,})$/;
-
-  // Define an array of days of the week
-  const days = [
-    { "day": "Monday", id: 1 },
-    { "day": "Tuesday", id: 2 },
-    { "day": "Wednesday", id: 3 },
-    { "day": "Thursday", id: 4 },
-    { "day": "Friday", id: 5 },
-    { "day": "Saturday", id: 6 },
-    { "day": "Sunday", id: 7 }
-  ];
 
   // Define an async function 'index' to handle rendering the index page
   async function renderIndex(req, res) {
