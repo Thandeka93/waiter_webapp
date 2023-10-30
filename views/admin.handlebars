@@ -113,6 +113,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Reset button confirmation
 
+// Function to clear cookies for checkboxes
+function clearCookiesForCheckboxes() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    setCookie(checkbox.id, false); // Clear the cookie by setting its value to false
+    checkbox.checked = false; // Uncheck the checkbox
+  });
+}
+
 // Add an event listener to the reset button
 const clearButton = document.querySelector("#clear");
 
@@ -121,7 +130,9 @@ clearButton.addEventListener("click", function (e) {
     "Are you sure you want to clear the schedule?\nThis will reset all schedules"
   );
 
-  if (!clearData) {
+  if (clearData) {
+    clearCookiesForCheckboxes(); // Call the function to clear cookies for checkboxes
+  } else {
     e.preventDefault();
   }
 });

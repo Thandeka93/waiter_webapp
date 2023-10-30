@@ -1,60 +1,62 @@
 <div class="container waiters">
   <h1>NOLU'S COFFEE SHOP</h1>
-<h2>{{username}}'s Schedule</h2>
-<h4>Select days below:</h4>
-<p class="error">{{messages.error}}</p>
-<p class="success">{{messages.success}}</p>
-<form action="/waiters" method="post" id="waitersForm">
-{{#each displayDays}}
-<div class="checkbox">
-
-  <input type="checkbox" value={{this.dayid}} id="{{this.day}}" name="day" />
+  <h2>{{username}}'s Schedule</h2>
+  <h4>Select days below:</h4>
+  <p class="error">{{messages.error}}</p>
+  <p class="success">{{messages.success}}</p>
+  <form action="/waiters" method="post" id="waitersForm">
+    {{#each displayDays}}
+    <div class="checkbox">
+      <input type="checkbox" value="{{this.dayid}}" id="{{this.day}}" name="day" />
       <label for="{{this.day}}" id="red">{{this.day}}</label><br>
-{{!-- <input type ="checkbox" value={{this.dayid}} id="Mon" name="day" /><label for="Mon" id="red">{{this.day}}</label><br> --}}
+    </div>
+    {{/each}}
+    <button type="submit" id="update">Update</button>
+  </form>
+</div>
 
-{{!-- <input type ="checkbox" value="2" id="Tues"  name="day" /><label for="Tues">Tuesday</label><br>
-<input type ="checkbox" value="3" id="Wed" name="day"  /><label for="Wed">Wednesday</label><br>
-<input type ="checkbox" value="4" id="Thurs" name="day"  /><label for="Thurs">Thursday</label><br>
-<input type ="checkbox" value="5" id="Fri" name="day"/><label for="Fri">Friday</label><br>
-<input type ="checkbox" value="6" id="Sat" name="day"/><label for="Sat">Saturday</label><br>
-<input type ="checkbox" value="7" id="Sun" name="day" /><label for="Sun">Sunday</label><br> --}}
-</div>
-{{/each}}
-<button type="submit"  id="update">Update</button>
-</form>
-</div>
 <script>
-// Wait for the DOM to load
-  document.addEventListener("DOMContentLoaded", function () {
-    // Get all checkboxes
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  // Function to set cookies
+  function setCookie(name, value) {
+    document.cookie = name + "=" + value + "; path=/";
+  }
 
-    // Add event listeners to handle their state
-    checkboxes.forEach(function (checkbox) {
-      checkbox.addEventListener("change", function () {
-        if (this.checked) {
-          this.classList.add("checked");
-        } else {
-          this.classList.remove("checked");
-        }
-      });
+  // Function to get cookies
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
+      while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
+      if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+    }
+    return null;
+  }
+
+  // Initialize checkboxes
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      setCookie(checkbox.id, checkbox.checked);
     });
 
-    // Handle hiding error and success messages
-    setTimeout(function () {
-      document.querySelector(".error").style.display = "none";
-    }, 3000);
-
-    document.querySelector(".error").style.display = "block";
-
-    setTimeout(function () {
-      document.querySelector(".success").style.display = "none";
-    }, 3000);
-
-    document.querySelector(".success").style.display = "block";
+    // Check the checkbox based on its stored state
+    const isChecked = getCookie(checkbox.id) === 'true';
+    checkbox.checked = isChecked;
   });
-</script>
 
+  setTimeout(function() {
+    document.querySelector(".error").style.display = "none";
+  }, 3000);
+
+  document.querySelector(".error").style.display = "block";
+
+  setTimeout(function() {
+    document.querySelector(".success").style.display = "none";
+  }, 3000);
+
+  document.querySelector(".success").style.display = "block";
+</script>
 
 
 

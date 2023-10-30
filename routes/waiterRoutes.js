@@ -68,94 +68,76 @@ async function renderAdmin(req, res) {
   }
 }
 
-  // Define an async function 'waiters' to handle rendering the waiters page
-  async function renderWaiters(req, res) {
-    // Extract the 'username' parameter from the request
-    let input = req.params.username;
-    // Initialize an array for storing waiter days
-    let waiterDays = [];
-    // Initialize boolean variables for each day of the week
-    let monChecked = false;
-    let tuesChecked = false;
-    let wedChecked = false;
-    let thurChecked = false;
-    let friChecked = false;
-    let satChecked = false;
-    let sunChecked = false;
+async function renderWaiters(req, res) {
+  // Extract the 'username' parameter from the request
+  let input = req.params.username;
 
-    // Check if 'input' is provided in the request
-    if (input) {
-      // Trim and format the 'username'
-      var trimmed = input.trim();
-      var cap = "";
-      var low = "";
+  // Initialize an array for storing waiter days
+  let waiterDays = [];
 
-      // Capitalize the first letter and make the rest of the name lowercase
-      for (let i = 0; i < trimmed.length - 1; ++i) {
-        cap = trimmed.charAt(0).toUpperCase();
-        low += trimmed.charAt(i + 1).toLowerCase();
-      }
+  // Initialize an object to store boolean variables for each day of the week
+  let dayChecks = {
+    monChecked: false,
+    tuesChecked: false,
+    wedChecked: false,
+    thurChecked: false,
+    friChecked: false,
+    satChecked: false,
+    sunChecked: false,
+  };
 
-      // Format the 'username'
-      username = cap + low;
+  // Check if 'input' is provided in the request
+  if (input) {
+    // Trim and format the 'username'
+    var trimmed = input.trim();
+    var cap = "";
+    var low = "";
+
+    // Capitalize the first letter and make the rest of the name lowercase
+    for (let i = 0; i < trimmed.length - 1; ++i) {
+      cap = trimmed.charAt(0).toUpperCase();
+      low += trimmed.charAt(i + 1).toLowerCase();
     }
 
-    // Check if the 'username' matches the provided regular expression
-    if (regex.test(username)) {
-      // Retrieve waiter days from the database using 'queries.getWaiterDays(username)'
-      waiterDays = await queries.getWaiterDaysAssigned(username);
-
-      // Loop through the waiter days and set corresponding boolean variables
-      for (let i = 0; i < waiterDays.length; ++i) {
-        let day = waiterDays[i].dayid;
-        switch (day) {
-          case 1:
-            monChecked = true;
-            break;
-          case 2:
-            tuesChecked = true;
-            break;
-          case 3:
-            wedChecked = true;
-            break;
-          case 4:
-            thurChecked = true;
-            break;
-          case 5:
-            friChecked = true;
-            break;
-          case 6:
-            satChecked = true;
-            break;
-          case 7:
-            sunChecked = true;
-            break;
-        }
-      }
-    }
-
-    // Set flash messages for error and success
-    req.flash("error", getError());
-    req.flash("success", getSuccess());
-
-    const displayDays = await queries.getDaysOfWeek();
-
-    // Render the 'waiters' page with the collected data
-    res.render("waiters", {
-      monChecked,
-      tuesChecked,
-      wedChecked,
-      thurChecked,
-      friChecked,
-      satChecked,
-      sunChecked,
-      username,
-      displayDays
-    });
-
-    // Clear the 'success' variable
-    success = "";
+    // Format the 'username'
+    username = cap + low;
   }
+
+  // Check if the 'username' matches the provided regular expression
+  if (regex.test(username)) {
+    // Retrieve waiter days from the database using 'queries.getWaiterDaysAssigned(username)'
+    waiterDays = await queries.getWaiterDaysAssigned(username);
+
+    // Loop through the waiter days and set corresponding boolean variables
+    waiterDays.forEach((waiterDay) => {
+      let dayId = waiterDay.dayid;
+
+      // Find the corresponding day object in the 'days' array and update the checkbox
+      let dayObject = days.find((day) => day.id === dayId);
+
+      if (dayObject) {
+        dayChecks[dayObject.day.toLowerCase() + 'Checked'] = true;
+      }
+      
+    });
+  }
+
+  // Set flash messages for error and success
+  req.flash("error", getError());
+  req.flash("success", getSuccess());
+
+  const displayDays = await queries.getDaysOfWeek();
+
+  // Render the 'waiters' page with the collected data
+  res.render("waiters", {
+    username,
+    displayDays,
+    ...dayChecks,
+  });
+
+  // Clear the 'success' variable
+  success = "";
+}
 
   // Define an async function 'postWaiters' to handle POST requests for the waiters page
   async function handlePostWaiters(req, res) {

@@ -1,27 +1,20 @@
-// import exphbs from 'express-handlebars';
+// Import Handlebars
+import Handlebars from 'handlebars';
 
-// export function isChecked(dayId, monChecked, tuesChecked, wedChecked, thurChecked, friChecked, satChecked, sunChecked) {
-//   switch (dayId) {
-//     case 1:
-//       return monChecked;
-//     case 2:
-//       return tuesChecked;
-//     case 3:
-//       return wedChecked;
-//     case 4:
-//       return thurChecked;
-//     case 5:
-//       return friChecked;
-//     case 6:
-//       return satChecked;
-//     case 7:
-//       return sunChecked;
-//     default:
-//       return false;
-//   }
-// }
+// Define the isChecked Handlebars helper
+Handlebars.registerHelper('isChecked', function(day, options) {
+  // Check if the day should be checked based on the dayChecks object
+  if (dayChecks && dayChecks[day.day.toLowerCase()]) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
 
-// // Do not export isChecked here; export it only once.
+// Export Handlebars if needed
+export default Handlebars;
 
-// exphbs.create().engine.handlebars.registerHelper('isChecked', isChecked);
+
+
+
 
