@@ -16,35 +16,7 @@
 </div>
 
 <script>
-  // Function to set cookies
-  function setCookie(name, value) {
-    document.cookie = name + "=" + value + "; path=/";
-  }
-
-  // Function to get cookies
-  function getCookie(name) {
-    var nameEQ = name + "=";
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i];
-      while (cookie.charAt(0) === ' ') cookie = cookie.substring(1, cookie.length);
-      if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
-    }
-    return null;
-  }
-
-  // Initialize checkboxes
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      setCookie(checkbox.id, checkbox.checked);
-    });
-
-    // Check the checkbox based on its stored state
-    const isChecked = getCookie(checkbox.id) === 'true';
-    checkbox.checked = isChecked;
-  });
-
+  
   setTimeout(function() {
     document.querySelector(".error").style.display = "none";
   }, 3000);
