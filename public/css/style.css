@@ -1,14 +1,14 @@
 body{ 
   text-align: center; 
-  background-image: url('https://img.freepik.com/premium-photo/hot-black-coffee-white-marble-cup-paste-reflected-black-glass-floor_44271-56.jpg'); 
+  background-image: url('https://dailycoffeenews.com/wp-content/uploads/2022/05/cup-of-coffee-1.jpg'); 
   background-size: cover; 
   background-repeat: no-repeat; 
   padding: 2%;
   margin: 2%;
   font-family:'Peralta'; 
-  font-size: medium;
+  font-size: large;
   color: #E3DAC9; 
-
+  font-weight: bold;
 }
 
 button{
@@ -71,7 +71,7 @@ font-size: 1.1em;
 }
 
 .success{
-color: green;
+color: #66FF00;
 font-size: 1.1em;
 }
 
@@ -135,19 +135,23 @@ table{
 .color-list {
   list-style: none; 
   display: flex;     
-  gap: 20px;         
+  gap: 20px;  
+  background-color: #926644;       
 }
 
 .color-list li {
   display: flex;     
   align-items: center;
+  background-color: #926644;
+  width: 210px;
 }
 
 .color-sq {
   display: inline-block;
   width: 20px;         
   height: 20px;        
-  margin-right: 8px;  
+  margin-right: 8px; 
+  background-color: #926644; 
 }
 
 .color-sq.red {

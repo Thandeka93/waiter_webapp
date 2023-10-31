@@ -75,16 +75,14 @@ async function renderWaiters(req, res) {
   // Initialize an array for storing waiter days
   let waiterDays = [];
 
-  // Initialize an object to store boolean variables for each day of the week
-  let dayChecks = {
-    monChecked: false,
-    tuesChecked: false,
-    wedChecked: false,
-    thurChecked: false,
-    friChecked: false,
-    satChecked: false,
-    sunChecked: false,
-  };
+  let dayChecks = {};
+
+  // Loop through the days array and initialize the corresponding properties
+  days.forEach(day => {
+    const dayKey = `${day.day.toLowerCase()}Checked`;
+    dayChecks[dayKey] = false;
+  });
+  
 
   // Check if 'input' is provided in the request
   if (input) {
