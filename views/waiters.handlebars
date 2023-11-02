@@ -1,37 +1,65 @@
-<div class="container waiters">
-  <h1>NOLU'S COFFEE SHOP</h1>
-  <h2>{{username}}'s Schedule</h2>
-  <h4>Select days below:</h4>
-  <p class="error">{{messages.error}}</p>
-  <p class="success">{{messages.success}}</p>
-  <form action="/waiters" method="post" id="waitersForm">
-    {{#each displayDays}}
-    <div class="checkbox">
-      <input type="checkbox" value="{{this.dayid}}" id="{{this.day}}" name="day" />
-      <label for="{{this.day}}" id="red">{{this.day}}</label><br>
-    </div>
-    {{/each}}
-    <button type="submit" id="update">Update</button>
-  </form>
+<h1>NOLU'S COFFEE SHOP</h1>
+<h2>{{username}}'s schedule</h2>
+{{#if messages.error}}
+<div class="flash-error">
+    {{messages.error}}
 </div>
+{{/if}}
 
+{{#if messages.success}}
+<div class="flash-success">
+    {{messages.success}}
+</div>
+{{/if}}
+
+
+<h2>Select days</h2>
+
+<form action="/waiters/{{username}}/update" method="post">
+<div class="checkbox">
+    <input type="checkbox" id="Monday" name="days" value="Monday" {{#if (includes  waiterShift 'Monday')}}checked{{/if}}>
+    <label for="Monday">Monday</label><br>
+    <input type="checkbox" id="Tuesday" name="days" value="Tuesday" {{#if (includes  waiterShift 'Tuesday')}}checked{{/if}}>
+    <label for="Tuesday">Tuesday</label><br>
+    <input type="checkbox" id="Wednesday" name="days" value="Wednesday" {{#if (includes  waiterShift 'Wednesday')}}checked{{/if}}>
+    <label for="Wednesday">Wednesday</label><br>
+    <input type="checkbox" id="Thursday" name="days" value="Thursday" {{#if (includes  waiterShift 'Thursday')}}checked{{/if}}>
+    <label for="Thursday">Thursday</label><br>
+    <input type="checkbox" id="Friday" name="days" value="Friday" {{#if (includes  waiterShift 'Friday')}}checked{{/if}}>
+    <label for="Friday">Friday</label><br>
+    <input type="checkbox" id="Saturday" name="days" value="Saturday" {{#if (includes  waiterShift 'Saturday')}}checked{{/if}}>
+    <label for="Saturday">Saturday</label><br>
+    <input type="checkbox" id="Sunday" name="days" value="Sunday" {{#if (includes  waiterShift 'Sunday')}}checked{{/if}}>
+    <label for="Sunday">Sunday</label><br>
+    <input type="submit" value="Update">
+    </div>
+</form>
 <script>
+    // error messages display for 3seconds
+    let errorMessageElem = document.querySelector('.flash-error')
   
-  setTimeout(function() {
-    document.querySelector(".error").style.display = "none";
-  }, 3000);
+    setTimeout(()=>{
+      errorMessageElem.style.display = 'none'
 
-  document.querySelector(".error").style.display = "block";
+    },3000)
+//scuccess messages display for 3.5 seconds
+let successMessageElem = document.querySelector('.flash-success')
 
-  setTimeout(function() {
-    document.querySelector(".success").style.display = "none";
-  }, 3000);
+    setTimeout(()=>{
+      successMessageElem.style.display = 'none'
 
-  document.querySelector(".success").style.display = "block";
-</script>
-
+    }, 3000)
 
 
-
-
-
+  </script>
+{{!-- 
+  {{#each days}}
+      <input
+        type="checkbox"
+        id="{{this.day}}"
+        name="days"
+        value="{{this.day}}"
+        {{#if (includes waiterSchedule this.day)}}checked{{/if}}
+      >
+      <label for="{{this.day}}">{{this.day}}</label><br>
+    {{/each}} --}}

@@ -1,127 +1,52 @@
-<div class="container  admin">
-<h1>NOLU'S COFFEE SHOP</h1>
-<h2>Week Schedule</h2>
-
-<ul class="color-list">
-  <h4>Color legend:</h4>
-  <li>
-    <span class="color-sq red"></span> Red: 1 waiter within a single day
-  </li>
-  <li>
-    <span class="color-sq orange"></span> Orange: 2 waiters within a single day
-  </li>
-  <li>
-    <span class="color-sq green"></span> Green: 3 waiters within a single day
-  </li>
-  <li>
-    <span class="color-sq black"></span> Grey: More than 3 waiters within a single day
-  </li>
-</ul>
-
-
-<div class="grid">
-<div id="mon" class="schedule-day">
-
-<h3>Mon</h3>
-{{#each monday}}
-<p class="monP">{{this}}</p>
-
-{{/each}}
+<div class="Heading">
+    <h1>NOLU'S COFFEE SHOP</h1>
+   <h2>Week Schedule</h2> 
+   {{#if messages.error}}
+<div class="flash-error">
+    {{messages.error}}
 </div>
-<div id="tues" class="schedule-day">
-<h3>Tues</h3>
-{{#each tuesday}}
-<p class="tueP">{{this}}</p>
+{{/if}}
 
-{{/each}}
+{{#if messages.success}}
+<div class="flash-success">
+    {{messages.success}}
 </div>
-<div id="wed" class="schedule-day"><h3>Wed</h3>
-{{#each wednesday}}
-<p class="wedP">{{this}}</p>
-
-{{/each}}
+{{/if}}
 </div>
-<div id="thur" class="schedule-day"><h3>Thur</h3>
-{{#each thursday}}
-<p class="thurP">{{this}}</p>
-
-{{/each}}
+<div class="key">
+     
+     <h4>NB: Days without waiters won't be shown.</h4>
+    <ul class="adminUl">
+        <li>Color legend:</li>
+        <li><div class="red-key"></div> Red: 1 waiter within a single day  </li>
+        <li><div class="orange-key"></div> Orange: 2 waiters within a single day</li>
+        <li><div class="green-key"></div>  Green: 3 waiters within a single day</li>
+        <li><div class="grey-key"></div> Grey: More than 3 waiters within a single day </li>
+    </ul>
 </div>
-<div id="fri" class="schedule-day"><h3>Fri</h3>
-{{#each friday}}
-<p class="friP">{{this}}</p>
-
-{{/each}}
-</div>
-<div id="sat"  class="schedule-day"><h3>Sat</h3>
-{{#each saturday}}
-<p class="satP">{{this}}</p>
-
-{{/each}}
-</div>
-<div id="sun" class="schedule-day"><h3>Sun</h3>
-{{#each sunday}}
-<p class="sunP">{{this}}</p>
-
-{{/each}}
-</div>
+<div class="Onduty">
+    <div class="flash-success"></div>
+    <div class="flash-error"></div>
+    <form action="/days" method="GET"></form>
+    <div class="grid">
+        {{#each allSchedules}}
+            <div class="{{this.status}}">
+                <h2>{{@key}}</h2>
+                {{#each this.waiters}}
+                    <p>{{this}}</p>
+                {{/each}}
+            </div>
+        {{/each}}
+    </div>
+    </form>
 </div>
 
- <div id="update">
-  <h2>Remove Waiter</h2>
-  <div id="deleteWaiter">
-  <form action="/removeWaiter" method="post">
-  <label for="waiterDelete">Select Waiter:</label>
-    <select name="waiterDelete">
-{{#each names}}
-<option>{{this}}</option>
-{{/each}}
-</select>
-<label for="deleteDay">Select Day:</label>
-<select name="deleteDay">
-{{#each days}}
-<option> {{this.day}}</option>
-{{/each}}
-</select>
-  <button type="submit" id="remove">Remove</button>
+<form action="reset" method="POST">
+    {{!-- <input class="resetB" type="submit" value="reset"> --}}
+    <button type="submit" class="reset" id="clear">Reset</button>
 </form>
-</div>
-
-  
-  <form action="/clear" method="post">
-  <button type="submit" id="clear">Reset</button>
-</form>
-</div>
 <script>
-
-document.addEventListener("DOMContentLoaded", function () {
-  const scheduleDays = document.querySelectorAll(".schedule-day");
-
-  scheduleDays.forEach(function (day) {
-    const numberOfPeople = day.querySelectorAll("p").length;
-    if (numberOfPeople === 1) {
-      day.classList.add("red-bg");
-    } else if (numberOfPeople === 2) {
-      day.classList.add("orange-bg");
-    } else if (numberOfPeople === 3) {
-      day.classList.add("green-bg");
-    } else if (numberOfPeople > 3){
-      day.classList.add("black-bg");
-    }
-  });
-});
-
 // Reset button confirmation
-
-// Function to clear cookies for checkboxes
-function clearCookiesForCheckboxes() {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    setCookie(checkbox.id, false); // Clear the cookie by setting its value to false
-    checkbox.checked = false; // Uncheck the checkbox
-  });
-}
-
 // Add an event listener to the reset button
 const clearButton = document.querySelector("#clear");
 
@@ -137,9 +62,5 @@ clearButton.addEventListener("click", function (e) {
   }
 });
 
+
 </script>
-
-
-
-
-

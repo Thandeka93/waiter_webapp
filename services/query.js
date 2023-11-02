@@ -1,158 +1,131 @@
-// Define a function 'createDatabaseQueries' that takes a 'db' object as a parameter
+// Export a function that creates a set of database queries
 export default function createDatabaseQueries(db) {
 
-  // Define an async function 'insertDayRecord' to insert a new day record in the database
-  async function insertDayRecord(id, day) {
+  // Function to update a waiter's schedule
+  async function updateWaiterAvailability(waiterName, dayOfTheWeek) {
     try {
-      await db.none(`INSERT INTO days(dayID, day) VALUES ($1, $2)`, [id, day]);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+      // Insert the waiter's name only if it doesn't already exist in the database
+      await db.none('INSERT INTO waiters (waiter_name) VALUES ($1) ON CONFLICT (waiter_name) DO NOTHING', [waiterName]);
+      // Get the waiter's ID
+      const waiterId = await db.oneOrNone('SELECT id FROM waiters WHERE waiter_name = $1', [waiterName]);
 
-  // Define an async function 'insertWaiterRecord' to insert a new waiter record in the database
-  async function insertWaiterRecord(waiter) {
-    try {
-      await db.none(`INSERT INTO waiters(name) VALUES ($1)`, waiter);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+      // Retrieve the existing schedule for the waiter
+      var available = await db.manyOrNone('SELECT day_id FROM schedule WHERE waiter_id = $1', [waiterId.id]);
 
-  // Define an async function 'getAdminSchedule' to retrieve admin schedule data from the database
-  async function getAdminSchedule() {
-    try {
-      let result = await db.manyOrNone(
-        `SELECT waiters.name, days.day FROM admin
-         JOIN days ON admin.dayID = days.dayID
-         JOIN waiters ON admin.waiterID = waiters.waiterID`
-      );
-      return result;
-    } catch (err) {
-      console.log(err);
-    }
-  }
+      // Delete the existing schedule if it exists
+      if (available) {
+        await db.none('DELETE FROM schedule WHERE waiter_id = $1', [waiterId.id]);
+      }
 
-  // Define an async function 'clearAdminSchedule' to clear the admin schedule by deleting all records
-  async function clearAdminSchedule() {
-    try {
-      await db.none(`DELETE FROM admin`);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+      // Insert a new schedule for the selected days
+      for (var i = 0; i < dayOfTheWeek.length; i++) {
+        // Check if at least 3 days are selected, otherwise, throw an error
+        if (dayOfTheWeek.length < 3) {
+          throw new Error('Please select at least 3 days');
+        }
 
-  // Define an async function 'assignWaiterToDay' to assign a waiter to a specific day in the admin schedule
-  async function assignWaiterToDay(dayID, waiterID) {
-    try {
-      await db.none("INSERT INTO admin(dayID, waiterID) VALUES ($1, $2)", [dayID, waiterID]);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+        let anyDay = dayOfTheWeek[i];
 
-  // Define an async function 'removeWaiterFromAdmin' to remove a waiter from the admin schedule
-  async function removeWaiterFromAdmin(waiterID) {
-    try {
-      await db.none("DELETE FROM admin WHERE waiterID = $1", waiterID);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+        // Get the ID for the selected day
+        let dayId = await db.one('SELECT id FROM day_of_the_week WHERE day = $1', [anyDay]);
 
-
-  // Define an async function 'getWaiterByName' to retrieve a waiter by name
-  async function getWaiterByName(waiter) {
-    try {
-      let result = await db.oneOrNone("SELECT name FROM waiters WHERE name = $1", waiter);
-      return result;
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  // Define an async function 'getWaiterDaysAssigned' to retrieve the days a waiter is assigned to
-  async function getWaiterDaysAssigned(name) {
-    if (name) {
-      try {
-        let result = await db.manyOrNone(
-          "SELECT dayID FROM admin JOIN waiters ON admin.waiterID = waiters.waiterID WHERE name = $1",
-          name
-        );
-        return result;
-      } catch (err) {
-        console.log(err);
+        // Insert the waiter name and day availability into the schedule
+        await db.none('INSERT INTO schedule (waiter_id, day_id) VALUES ($1, $2)', [waiterId.id, dayId.id]);
       }
     }
+    catch (error) {
+      console.error(error.message);
+    }
   }
 
-  // Define an async function 'getWaiterIDByName' to retrieve a waiter's ID by name
-  async function getWaiterIDByName(name) {
+  // Function to get the schedule of a specific waiter
+  async function getWaiterAvailability(waiterName) {
     try {
-      const result = await db.one("SELECT waiterID FROM waiters WHERE name = $1", name);
-      return result.waiterid; // Make sure to use the correct property name
-    } catch (err) {
-      if (err.name === 'QueryResultError' && err.code === 0) {
-        // Handle the case when no result is found (QueryResultError with code 0)
-        return null; // or some other appropriate value
-      } else {
-        console.log(err);
-        throw err; // Rethrow other errors for debugging purposes
+      // Join the three tables to retrieve all inserted values for the specified waiter
+      let waiterSchedule = await db.manyOrNone('SELECT waiters.waiter_name, day_of_the_week.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN day_of_the_week ON schedule.day_id = day_of_the_week.id WHERE waiters.waiter_name = $1', [waiterName]);
+      return waiterSchedule;
+    }
+    catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Function to get all waiter schedules
+  async function getAllWaiterAvailabilities() {
+    try {
+      // Join all the tables to retrieve all the schedules
+      let allWaiterSchedules = await db.manyOrNone('SELECT waiters.waiter_name, day_of_the_week.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN day_of_the_week ON schedule.day_id = day_of_the_week.id');
+      return allWaiterSchedules;
+    }
+    catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Function to get the schedule by day, showing the number of waiters available for each day
+  async function countWaitersByDay() {
+    // Fetch all schedules from the database
+    const allSchedules = await getAllWaiterAvailabilities();
+    const scheduleByDay = {};
+
+    for (const schedule of allSchedules) {
+      // Assign the day and waiter_name as the object keys for the schedule
+      const { day, waiter_name } = schedule;
+
+      if (!scheduleByDay[day]) {
+        scheduleByDay[day] = { waiters: [], count: 0 };
+      }
+
+      // Check if the waiter already exists in the schedule for that day
+      const waiterExists = scheduleByDay[day].waiters.includes(waiter_name);
+
+      if (!waiterExists) {
+        scheduleByDay[day].waiters.push(waiter_name);
+        scheduleByDay[day].count++;
       }
     }
+
+    for (const day in scheduleByDay) {
+      // Log the day and the number of waiters available
+      console.log(`Day: ${day}, Number of Waiters: ${scheduleByDay[day].count}`);
+    }
+
+    return scheduleByDay;
   }
 
-  // Define an async function 'getDaysAssignedToWaiter' to retrieve the days assigned to a waiter
-  async function getDaysAssignedToWaiter(waiterID) {
+  // Function to reset the database, deleting all schedules and waiters
+  async function resetDatabase() {
     try {
-      let result = await db.manyOrNone("SELECT dayID FROM admin WHERE waiterID = $1", waiterID);
-      return result;
-    } catch (err) {
-      console.log(err);
+      // Delete all schedules
+      await db.none('DELETE FROM schedule');
+
+      // Delete all waiters
+      await db.none('DELETE FROM waiters');
+    } catch (error) {
+      console.error(error.message);
     }
   }
 
-  async function deleteWaiter(waiterID, dayID) {
+  // Function to get the days of the week from the database
+  async function retrieveWeekdays() {
     try {
-      await db.none("DELETE FROM admin WHERE waiterID=$1 AND dayID=$2", [waiterID, dayID]);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function getDays(){
-    return await db.manyOrNone("SELECT day FROM days");
-  }
-
-   // Define an async function 'getDaysOfWeek' to retrieve the days of the week from the database
-   async function getDaysOfWeek() {
-    try {
-      const days = await db.manyOrNone("SELECT day, dayID FROM days");
+      const days = await db.manyOrNone('SELECT day FROM day_of_the_week');
       return days;
-    } catch (err) {
-      console.log(err);
-      return [];
+    } catch (error) {
+      console.error(error.message);
     }
   }
+  
 
-  // Return an object with the defined functions as properties
   return {
-    clearAdminSchedule,
-    insertDayRecord,
-    insertWaiterRecord,
-    getAdminSchedule,
-    removeWaiterFromAdmin,
-    assignWaiterToDay,
-    getWaiterByName,
-    getWaiterIDByName,
-    getDaysAssignedToWaiter,
-    getWaiterDaysAssigned,
-    deleteWaiter,
-    getDays,
-    getDaysOfWeek
+    updateWaiterAvailability,
+    getAllWaiterAvailabilities,
+    countWaitersByDay,
+    getWaiterAvailability,
+    resetDatabase,
+    retrieveWeekdays
   };
 }
-
 
 
 

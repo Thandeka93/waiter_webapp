@@ -1,52 +1,32 @@
-// scheduleProcessor.js
+// // Fetch days from the database and populate the checkboxes
+// async function populateCheckboxes() {
+//   try {
+//       const days = await retrieveWeekdays(); // Assuming this function fetches days from the database
 
-export default function createScheduleProcessor(schedule) {
-    let names = [];
-    let monday = [];
-    let tuesday = [];
-    let wednesday = [];
-    let thursday = [];
-    let friday = [];
-    let saturday = [];
-    let sunday = [];
-  
-    // Loop through the schedule data and categorize names based on the day of the week
-    for (let i = 0; i < schedule.length; ++i) {
-      const entry = schedule[i];
-  
-      if (!names.includes(entry.name)) {
-        names.push(entry.name);
-      }
-  
-      switch (entry.day) {
-        case "Monday":
-          monday.push(entry.name);
-          break;
-        case "Tuesday":
-          tuesday.push(entry.name);
-          break;
-        case "Wednesday":
-          wednesday.push(entry.name);
-          break;
-        case "Thursday":
-          thursday.push(entry.name);
-          break;
-        case "Friday":
-          friday.push(entry.name);
-          break;
-        case "Saturday":
-          saturday.push(entry.name);
-          break;
-        case "Sunday":
-          sunday.push(entry.name);
-          break;
-      }
-    }
-  
-    // Return an object with functions to access the processed data
-    return {
-      getNames: () => names,
-      getDaysData: () => ({ monday, tuesday, wednesday, thursday, friday, saturday, sunday }),
-    };
-  }
-  
+//       const checkboxContainer = document.getElementById('checkbox-container');
+
+//       // Create checkboxes based on the days data
+//       days.forEach(day => {
+//           const checkbox = document.createElement('input');
+//           checkbox.type = 'checkbox';
+//           checkbox.name = 'days';
+//           checkbox.value = day;
+//           if (waiterShift.includes(day)) {
+//               checkbox.checked = true;
+//           }
+
+//           const label = document.createElement('label');
+//           label.htmlFor = day;
+//           label.textContent = day;
+
+//           checkboxContainer.appendChild(checkbox);
+//           checkboxContainer.appendChild(label);
+//           checkboxContainer.appendChild(document.createElement('br'));
+//       });
+//   } catch (error) {
+//       console.error(error.message);
+//   }
+// }
+
+// // Call the function to populate checkboxes when the page loads
+// populateCheckboxes();
