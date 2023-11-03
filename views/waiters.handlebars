@@ -52,14 +52,8 @@ let successMessageElem = document.querySelector('.flash-success')
 
 
   </script>
-{{!-- 
-  {{#each days}}
-      <input
-        type="checkbox"
-        id="{{this.day}}"
-        name="days"
-        value="{{this.day}}"
-        {{#if (includes waiterSchedule this.day)}}checked{{/if}}
-      >
+
+{{!-- {{#each days}}
+      <input type="checkbox" id="{{this.day}}" name="days" value="{{this.day}}" {{#if (includes selectedDays this.day)}}checked{{/if}}>
       <label for="{{this.day}}">{{this.day}}</label><br>
     {{/each}} --}}

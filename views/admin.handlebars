@@ -14,8 +14,7 @@
 {{/if}}
 </div>
 <div class="key">
-     
-     <h4>NB: Days without waiters won't be shown.</h4>
+    
     <ul class="adminUl">
         <li>Color legend:</li>
         <li><div class="red-key"></div> Red: 1 waiter within a single day  </li>
@@ -25,20 +24,20 @@
     </ul>
 </div>
 <div class="Onduty">
-    <div class="flash-success"></div>
-    <div class="flash-error"></div>
-    <form action="/days" method="GET"></form>
-    <div class="grid">
-        {{#each allSchedules}}
-            <div class="{{this.status}}">
-                <h2>{{@key}}</h2>
-                {{#each this.waiters}}
-                    <p>{{this}}</p>
-                {{/each}}
-            </div>
+  <div class="flash-success"></div>
+  <div class="flash-error"></div>
+  <form action="/days" method="GET"></form>
+  <div class="grid">
+    {{#each allSchedules}}
+      <div class="{{getStatus this.count}}">
+        <h2>{{@key}}</h2>
+        {{#each this.waiters}}
+          <p>{{this}}</p>
         {{/each}}
-    </div>
-    </form>
+      </div>
+    {{/each}}
+  </div>
+  </form>
 </div>
 
 <form action="reset" method="POST">

@@ -49,6 +49,18 @@ hbs.handlebars.registerHelper('includes', function(arr, item) {
       return false;
     }
   });
+
+  hbs.handlebars.registerHelper('getStatus', function(count) {
+    if (count === 1) {
+      return 'red';
+    } else if (count === 2) {
+      return 'orange';
+    } else if (count === 3) {
+      return 'green';
+    } else {
+      return 'grey';
+    }
+  });
   
 
 

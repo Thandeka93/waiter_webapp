@@ -62,36 +62,32 @@ export default function createDatabaseQueries(db) {
     }
   }
 
-  // Function to get the schedule by day, showing the number of waiters available for each day
   async function countWaitersByDay() {
-    // Fetch all schedules from the database
-    const allSchedules = await getAllWaiterAvailabilities();
-    const scheduleByDay = {};
-
-    for (const schedule of allSchedules) {
-      // Assign the day and waiter_name as the object keys for the schedule
-      const { day, waiter_name } = schedule;
-
-      if (!scheduleByDay[day]) {
-        scheduleByDay[day] = { waiters: [], count: 0 };
+    try {
+      // Fetch all schedules from the database
+      const allWaiterSchedules = await db.manyOrNone('SELECT waiters.waiter_name, day_of_the_week.day FROM waiters JOIN schedule ON waiters.id = schedule.waiter_id JOIN day_of_the_week ON schedule.day_id = day_of_the_week.id');
+  
+      const scheduleByDay = {};
+  
+      // Initialize the scheduleByDay object with all days
+      const days = await retrieveWeekdays();
+      for (const day of days) {
+        scheduleByDay[day.day] = { waiters: [], count: 0 };
       }
-
-      // Check if the waiter already exists in the schedule for that day
-      const waiterExists = scheduleByDay[day].waiters.includes(waiter_name);
-
-      if (!waiterExists) {
+  
+      // Populate the scheduleByDay object with waiter schedules
+      for (const schedule of allWaiterSchedules) {
+        const { day, waiter_name } = schedule;
         scheduleByDay[day].waiters.push(waiter_name);
         scheduleByDay[day].count++;
       }
+  
+      return scheduleByDay;
+    } catch (error) {
+      console.error(error.message);
     }
-
-    for (const day in scheduleByDay) {
-      // Log the day and the number of waiters available
-      console.log(`Day: ${day}, Number of Waiters: ${scheduleByDay[day].count}`);
-    }
-
-    return scheduleByDay;
   }
+  
 
   // Function to reset the database, deleting all schedules and waiters
   async function resetDatabase() {
